@@ -1,0 +1,52 @@
+{% extends 'workflow/basic_struct.html' %}
+
+{% block title %}
+Auftrag - Übersicht
+{% endblock %}
+
+{% block additional_headers %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/auftrags_uebersicht.css' %}">
+{% endblock %}
+
+{% block content %}
+    {% if msg_head %}
+        <div class="success_message">
+            <h1>{{ msg_head }}</h1>
+        </div>
+    {% endif %}
+    <div class="col-8" id="zero-padding">
+        <h1>{{ auftrag.label_name }} (ID: {{ auftrag.id }})</h1>
+    </div>
+    <div class="col-4" id="zero-padding">
+        <div class="inside-link">
+            <a href="{% url 'order_overview' %}">Aufträge</a>
+        </div>
+    </div>
+    <div class="col-8">
+    <div class="zeiten">
+    Eingangszeit: {{ auftrag.eingangs_zeit }}
+    </div>
+    {% include 'workflow/steckbrief_auftrag.html' with no_payment_details='true' %}
+    <div>
+        {%if auftrag.bereits_gezahlt %}
+            <b>Bereits gezahlt:</b> Ja
+        {% else %}
+            <form enctype="multipart/form-data" method="post">
+                {% csrf_token %}
+                <b>Bereits gezahlt: </b>{{ form.bereits_gezahlt }}<br>
+                <input type="submit" value="Status ändern">
+            </form>
+        {% endif %}
+    </div>
+    </div>
+    <div class="col-4">
+    <h2>Kunde</h2>
+        <a href="{% url 'kunde_details' kunde_id=kunde.id %}">{{ kunde.vorname }} {{ kunde.nachname }}</a>
+        {% include 'workflow/steckbrief_kunde.html' %}
+    </div>
+    <div class="col-12">
+    <h2>Bodenproben</h2>
+    {% include 'workflow/table_soil_sample_details.html' with soil_sample_list=bodenproben%}
+    </div>
+{% endblock %}

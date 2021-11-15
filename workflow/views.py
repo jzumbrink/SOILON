@@ -444,6 +444,9 @@ def createAuftragDict(auftrags_id):
         'pb': getPpmValue('pb', bodenprobe.id),
         'cu': getPpmValue('cu', bodenprobe.id),
         'zn': getPpmValue('zn', bodenprobe.id),
+        'cr': getPpmValue('cr', bodenprobe.id),
+        'ni': getPpmValue('ni', bodenprobe.id),
+        'as': getPpmValue('as', bodenprobe.id),
     } for bodenprobe in Bodenprobe.objects.filter(auftrags_id=auftrags_id)]
     form = UpdateAuftrag()
     return {'auftrags_id': auftrags_id,
@@ -455,16 +458,16 @@ def createAuftragDict(auftrags_id):
 
 
 @login_required
-def auftrag_details(request, auftrags_id):
+def order_details(request, order_id):
     if request.method == 'POST':
         form = UpdateAuftrag(request.POST)
         if form.is_valid():
             print(form)
             print(form.cleaned_data['bereits_gezahlt'])
-            Auftrag.objects.filter(pk=auftrags_id).update(bereits_gezahlt=form.cleaned_data['bereits_gezahlt'])
+            Auftrag.objects.filter(pk=order_id).update(bereits_gezahlt=form.cleaned_data['bereits_gezahlt'])
             return HttpResponseRedirect(
-                reverse(auftrag_details_success_msg, kwargs={'auftrags_id': auftrags_id, 'success': 2}))
-    return render(request, 'workflow/auftrag_details.html', createAuftragDict(auftrags_id))
+                reverse(auftrag_details_success_msg, kwargs={'auftrags_id': order_id, 'success': 2}))
+    return render(request, 'workflow/auftrag_details.html', createAuftragDict(order_id))
 
 
 @login_required
@@ -540,6 +543,9 @@ def bodenprobe_details(request, bodenprobe_id):
         'pb': getPpmValue('pb', bodenprobe.id),
         'cu': getPpmValue('cu', bodenprobe.id),
         'zn': getPpmValue('zn', bodenprobe.id),
+        'cr': getPpmValue('cr', bodenprobe.id),
+        'ni': getPpmValue('ni', bodenprobe.id),
+        'as': getPpmValue('as', bodenprobe.id),
     }, ]
 
     answer_filename = 'Auswertung-{0}-{1}-{2}.{3}'.format(kunde.vorname, kunde.nachname, bodenprobe.id,

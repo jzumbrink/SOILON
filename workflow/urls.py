@@ -14,7 +14,7 @@ urlpatterns = [
     path('guide/', views.workflow_guide, name="w_guide"),
     path('analytics/', views.analytics, name="analytics"),
 
-    path('order/<int:order_id>', views.auftrag_details, name="order_details"),
+    path('order/<int:order_id>', views.order_details, name="order_details"),
     path('customer/<int:kunde_id>', views.kunde_details, name="kunde_details"),
     path('soil-sample/<int:bodenprobe_id>', views.bodenprobe_details, name="bodenprobe_details"),
 

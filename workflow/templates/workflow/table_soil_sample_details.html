@@ -1,0 +1,60 @@
+<table class="auswertungs-tabelle">
+        <colgroup id="id_col">
+            <col>
+        </colgroup>
+        <colgroup id="soil-sample-label-col">
+            <col>
+        </colgroup>
+        <colgroup id="ppm-value-col">
+            <col>
+        </colgroup>
+        <colgroup id="ppm-value-col">
+            <col>
+        </colgroup>
+        <colgroup id="ppm-value-col">
+            <col>
+        </colgroup>
+        <colgroup id="ppm-value-col">
+            <col>
+        </colgroup>
+        <colgroup id="ppm-value-col">
+            <col>
+        </colgroup>
+        <colgroup id="ppm-value-col">
+            <col>
+        </colgroup>
+        <colgroup id="ppm-value-col">
+            <col>
+        </colgroup>
+        <colgroup id="soil-sample-etc">
+            <col>
+        </colgroup>
+        <thead>
+        <tr class="head-row">
+            <td><b>id</b></td>
+            <td><b>Name</b></td>
+            <td><b>Cadmium</b></td>
+            <td><b>Blei</b></td>
+            <td><b>Kupfer</b></td>
+            <td><b>Zink</b></td>
+            <td><b>Chrom</b></td>
+            <td><b>Nickel</b></td>
+            <td><b>Arsen</b></td>
+            <td><b>Sonstiges</b></td>
+        </tr>
+        </thead>
+        {% for soil_sample in soil_sample_list %}
+            <tr class="auftrags-daten-reihe">
+                <td><a href="{% url 'bodenprobe_details' bodenprobe_id=soil_sample.id %}">{{ soil_sample.id }}</a></td>
+                <td>{% if soil_sample.label_name %}Bodenprobe{% else %}{{ soil_sample.label_name }}{% endif %}</td>
+                <td>{{ soil_sample.cd }} ppm</td>
+                <td>{{ soil_sample.pb }} ppm</td>
+                <td>{{ soil_sample.cu }} ppm</td>
+                <td>{{ soil_sample.zn }} ppm</td>
+                <td>{{ soil_sample.cr }} ppm</td>
+                <td>{{ soil_sample.ni }} ppm</td>
+                <td>{{ soil_sample.as }} ppm</td>
+                <td>{% if soil_sample.extra_info %}{{ soil_sample.extra_info }}{% else %}-{% endif %}</td>
+            </tr>
+        {% endfor %}
+    </table>

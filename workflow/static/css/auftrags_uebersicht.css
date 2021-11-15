@@ -1,4 +1,4 @@
-#id_col, #auftrag-count-bod-col {
+#auftrag-count-bod-col {
     width: 10%;
 }
 
@@ -30,13 +30,23 @@
     width: 30%;
 }
 
-#probe-xtra-info, #bodenprobe-label-col {
-    width: 20%;
+#id_col {
+    width: 5%;
+}
+
+#soil-sample-label-col {
+    width: 15%;
 }
 
 #ppm-value-col {
-    width: 12.5%;
+    width: 10%;
 }
+
+#soil-sample-etc {
+    width: 10%;
+}
+
+
 
 .auswertungs-tabelle {
     width: 100%;
