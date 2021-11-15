@@ -1,0 +1,8 @@
+.kunden_text {
+    white-space: pre-wrap;
+}
+
+.text-box{
+    background-color: lightgray;
+    border: 4px solid gray;
+}

@@ -1,0 +1,116 @@
+#id_col, #auftrag-count-bod-col {
+    width: 10%;
+}
+
+#details_col {
+    width: 30%;
+}
+
+#count-bodenprobe-col {
+    width: 10%;
+}
+
+#fortschritt_col {
+    width: 50%;
+}
+
+#auftrag-label-col {
+    width: 75%;
+}
+
+#auftrag-status-col {
+    width: 25%;
+}
+
+#auftrag-name-col, #auftrag-kunde-col {
+    width: 25%;
+}
+
+#auftrag-progress-col {
+    width: 30%;
+}
+
+#probe-xtra-info, #bodenprobe-label-col {
+    width: 20%;
+}
+
+#ppm-value-col {
+    width: 12.5%;
+}
+
+.auswertungs-tabelle {
+    width: 100%;
+}
+
+.auswertungs-tabelle {
+    border: 2px solid rgba(3,11,40,0.36);
+    margin-top: 15px;
+    color: black;
+}
+
+.details-cell {
+    white-space: pre-line;
+}
+
+.auswertungs-tabelle tr {
+    border-collapse: collapse;
+    border: 1px solid lightgray;
+}
+
+.auswertungs-tabelle td {
+    padding: 5px;
+}
+
+.head-row {
+    background-image: url("../img/verlauf_alt_1.png");
+    border-bottom: 2px solid black;
+}
+
+.head-row td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-transform: uppercase;
+    color: white;
+}
+
+.auftrags-daten-reihe {
+    background-color: #fff;
+}
+
+.auftrags-daten-reihe:nth-child(2n) {
+    background-color: #d2d2d2;
+}
+
+.fortschritt-label {
+    width: 100%;
+}
+
+.fortschritt-anzeige {
+    width: 100%;
+    float: left;
+}
+
+.fortschritt-part {
+    width: 100%;
+    display: flex;
+}
+
+.not-payed, .already-payed {
+    text-transform: uppercase;
+    color: white;
+    width: 66.66%;
+    text-align: right;
+    padding-right: 20px
+}
+
+.kunden-tabelle-heading{
+    font-size: 1.2em;
+}
+
+.not-payed {
+    background-color: red;
+}
+
+.already-payed {
+    background-color: green;
+}

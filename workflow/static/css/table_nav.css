@@ -1,0 +1,33 @@
+.seitenangabe {
+    text-align: center;
+    width: 100%;
+}
+
+.zurueck {
+    text-align: left;
+}
+
+.weiter {
+    text-align: right;
+}
+
+.table-nav-bar {
+    padding: 10px;
+}
+
+.zurueck, .weiter a{
+    color: #5c7cbd;
+}
+
+.zurueck, .weiter a:hover {
+    color: black;
+}
+
+.not-usable {
+    color: lightgray;
+}
+
+.direction-button {
+    padding-right: 14px;
+    padding-left: 14px;
+}

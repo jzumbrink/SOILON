@@ -1,0 +1,31 @@
+.background-bar, [class*='progress-'] {
+    height: 100%;
+    float: left;
+}
+
+.background-bar {
+    height: 22px;
+    border: 1px solid black;
+    width: 100%;
+    background-color: rgba(37,37,37,0.76);
+}
+
+.progress-100 {
+    background-color: #2bde00;
+}
+
+.progress-min-60 {
+    background-color: #dec205;
+}
+
+.progress-min-40 {
+    background-color: #de540d;
+}
+
+.progress-min-0 {
+    background-color: #de060c;
+}
+
+.value-progress {
+    width: 100%;
+}

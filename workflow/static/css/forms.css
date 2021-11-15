@@ -1,0 +1,60 @@
+.form {
+    border: 2px solid black;
+    margin: 10px;
+    margin: auto;
+    max-width: 500px;
+}
+
+.form-heading {
+    vertical-align: center;
+    padding-top: 50px;
+    height: 100%;
+}
+
+.form-head h1 {
+    text-align: center;
+
+    color: white;
+    margin: 0;
+}
+
+.form-attribut {
+    text-align: center;
+    font-weight: bold;
+    font-size: large;
+}
+
+.form-input {
+    width: 296px;
+    margin: auto;
+}
+
+.form-input input{
+    width: 296px;
+    margin: auto;
+}
+
+.form-submit-button input{
+    width: 50%;
+    margin: auto auto auto 25%;
+    height: 50px;
+    font-size: large;
+    font-weight: bold;
+    /*some parts of the styling of the buttons are outsourced to forms.js to be applied dynamically*/
+}
+
+.form-input, .form-attribut {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.form-head {
+    width: 100%;
+    background-image: url("../img/verlauf_alt_1.png");
+    height: 150px;
+}
+
+.form-body {
+    padding: 10px
+}
+

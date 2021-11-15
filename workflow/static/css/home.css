@@ -1,0 +1,54 @@
+.img-erde img {
+    max-width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 0%;
+    margin-right: 0%;
+}
+
+.symbol-images {
+    margin-top: 0px;
+}
+
+.main-topic-button {
+    width: 100%;
+    height: 300px;
+    color: black;
+    border: none;
+}
+
+.heading-main-button {
+    color: white;
+}
+
+.main-topic-button:hover h1 {
+    color: #515151;
+    text-decoration: underline #515151;
+}
+
+#button-kunde-anlegen {
+    background-color: #02B49B;
+    background-image: url("../img/verlauf1b.jpg");
+}
+
+#button-kunde-anlegen:hover {
+    background-color: #00E2BB;
+}
+
+#button-auftrag-erstellen {
+    background-color: #A1DCEE;
+    background-image: url("../img/verlauf4.jpg");
+}
+
+#button-auftrag-erstellen:hover {
+    background-color: #D1ECEE;
+}
+
+#button-analyse-hochladen {
+    background-color: #EDED8B;
+    background-image: url("../img/verlauf5.PNG");
+}
+
+#button-analyse-hochladen:hover {
+    background-color: #FFFFBB;
+}

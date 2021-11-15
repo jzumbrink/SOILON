@@ -1,0 +1,95 @@
+/*
+Should be applied to all sites with a search bar
+*/
+
+/*Search window*/
+#suche {
+    border: 2px solid black;
+    border-radius: 0.2em;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 40%;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    width: 45%;
+    font-size: 1.2em;
+    transition: width 1.2s ease-in-out, margin-left 1.2s ease-in-out;
+}
+
+#suche:focus {
+    margin-left: 5%;
+    width: 80%;
+}
+
+.search_button {
+    height: 100%;
+    font-size: 1.2em;
+    width: 15%;
+}
+
+/*Menu to select Class*/
+.select-menu-db select {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    width: 100%;
+    font-size: 36px;
+    font-weight: 500;
+    text-transform: uppercase;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    line-height: 1.1;
+    background-image: url("../img/verlauf_alt_1.png");
+    padding: 10px;
+    border: 3px solid gray;
+    box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.3);
+    border-radius: 3px;
+    outline: none;
+    color: #fff;
+}
+
+.select-menu-db:hover select {
+    color: #aafaff;
+    cursor: pointer;
+}
+
+.select-menu-db option{
+    color: black;
+}
+
+.select-menu-db select::-ms-expand { /*Only needed for Internet Explorer*/
+  display: none;
+}
+
+.select-menu-db select:focus::-ms-value { /*Only needed for Internet Explorer*/
+  background-color: transparent;
+}
+
+/*displaying that the data is loading*/
+div.warte-anzeige p{
+    visibility: hidden;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+/*int fields to specify the current search, e.g. the results per site */
+.num-in {
+    width: 60px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+.nav-table {
+    text-align: center;
+    line-height: 1.2;
+}
+
+/*The Buttons to navigate at the bottom of the page*/
+.table-nav-button {
+    width: 50%;
+    margin-left: 25%;
+    margin-right: 25%;
+    margin-top: 20px;
+    height: 50px;
+}

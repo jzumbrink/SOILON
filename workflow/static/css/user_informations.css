@@ -1,0 +1,26 @@
+.information-box {
+    border: 3px solid darkblue;
+    background-color: #252525;
+    width: 100%;
+    margin-bottom: 30px;
+    padding: 10px;
+    color: #5c7cbd;
+}
+
+.usernames {
+    text-align: center;
+    font-size: 1.4em;
+    font-weight: 800;
+    padding: 5px;
+}
+
+.logout-button {
+    background-color: #3151aa;
+    color: #ffffff;
+    border: 1px solid black;
+}
+
+.small-logo {
+    width: 100%;
+    margin-bottom: 10px;
+}

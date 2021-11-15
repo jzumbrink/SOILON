@@ -1,0 +1,174 @@
+* {
+    box-sizing: border-box;
+    font-family: 'GT-Walsheim';
+    font-weight: 400;
+}
+
+b {
+    font-weight: 700;
+}
+
+h1 {
+    text-transform: uppercase;
+}
+
+[class*="col-"]{
+  float: left;
+  padding: 15px;
+}
+
+[class*="col-np-"]{
+    float: left;
+    padding: 0px;
+}
+
+
+.col-1, col-np-1 {width: 8.33%;}
+.col-2, col-np-2 {width: 16.66%;}
+.col-3, col-np-3 {width: 25%;}
+.col-4, col-np-4 {width: 33.33%;}
+.col-5, col-np-5 {width: 41.66%;}
+.col-6, col-np-6 {width: 50%;}
+.col-7, col-np-7 {width: 58.33%;}
+.col-8, col-np-8 {width: 66.66%;}
+.col-9, col-np-9 {width: 75%;}
+.col-10, col-np-10 {width: 83.33%;}
+.col-11, col-np-11 {width: 91.66%;}
+.col-12, col-np-12 {width: 100%;}
+
+#zero-padding {
+    padding: 0px;
+}
+
+#side-padding-small {
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+
+@font-face {
+    font-family: 'GT-Walsheim';
+    src: url("../fonts/GT-Walsheim-Thin.woff2") format('woff2');
+    src: url("../fonts/GT-Walsheim-Thin.woff") format('woff');
+    /*src: url("../fonts/GT-Walsheim-Thin-Oblique.woff2") format('woff2');
+    src: url("../fonts/GT-Walsheim-Thin-Oblique.woff") format('woff');*/
+}
+
+.menu-button, .main-button, .admin-button{
+    background-color: black;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    padding-right: 12px;
+    padding-left: 12px;
+    color: white;
+    border: none;
+    height: 80px;
+}
+
+.menu-button:focus, .main-button:focus, .admin-button:focus{
+    outline: none;
+    box-shadow: none;
+}
+
+.main-button{
+    background-color: black;
+}
+
+.menu-button {
+    background-color: black;
+}
+
+.admin-button{
+    color: rgba(72, 112, 255, 0.9);
+}
+
+a .main-button:hover {
+    color: rgba(76, 255, 66, 0.67);
+}
+
+a .admin-button:hover {
+    color: rgba(72, 112, 255, 0.65);
+}
+
+a .menu-button:hover{
+    color: rgba(176,222,241, 1);
+}
+
+.text-umbruch {
+    white-space: pre-wrap;
+}
+
+#outer_logo{
+    height:100px;
+    width: 400px;
+    //width:330px;
+}
+
+#inner_logo{
+    alignment: center;
+    height:inherit;
+}
+
+#inner_logo img{
+    alignment: center;
+    max-height:100%;
+}
+
+.complete_top_nav{
+    float: left;
+    width: 100%;
+    height: 100px;
+    background-color: black;
+}
+
+.foot-bar-div{
+    width: 100%;
+    float: left;
+}
+
+.footer{
+    //margin-top: -200px;
+    position: relative;
+    width: 100%;
+    background-color: lightgray;
+    opacity: 50%;
+}
+
+.zeiten {
+    color: rgba(47, 12, 48, 0.43);
+    font-size: 0.8em;
+}
+
+.important {
+    font-size: 1.2em;
+}
+
+.inside-link {
+    vertical-align: center;
+    height: 100%;
+}
+
+.inside-link a {
+    color: #4cbbde;
+}
+
+/*
+#general-content {
+    background-color: white;
+}
+
+#rand {
+    background-color: black;
+    height: 100%;
+}
+
+body {
+    background-color: black;
+}*/
+
+.success_message {
+    color: #269c00;
+    text-align: center;
+}

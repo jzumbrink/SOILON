@@ -1,0 +1,78 @@
+/*chosen state*/
+.current-status-col {
+    width: 40%;
+}
+
+/*not the chosen state*/
+.not-current-status-col{
+    width: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/*chosen state*/
+.big-status {
+    margin-top: 5px;
+    height: 130px;
+    background-color: green;
+}
+
+/*not the chosen state*/
+.small-status {
+    margin-top: 5px;
+    border: 3px solid black;
+    text-align: center;
+    min-width: 90%;
+    min-height: 130px;
+    padding: 5px;
+}
+
+/*Every state gets a different color*/
+#status-0 {
+    background: #e17915 url("../img/verlauf2.PNG");
+    background-size: 100% 100%;
+}
+#status-1 {
+    background: #f9ff4c url("../img/verlauf4.jpg");
+    background-size: 100% 100%;
+}
+#status-2 {
+    background-color: #a591c5;
+    background: url("../img/verlauf5.PNG");
+    background-size: 100% 100%;
+}
+#status-3 {
+    background-color: #62a1c7;
+    background: url("../img/verlauf1.png");
+    background-size: 100% 100%;
+}
+#status-4 {
+    background-color: #332da8;
+    background: url("../img/verlauf3.PNG");
+    background-size: 100% 100%;
+}
+#status-5 {
+    background-color: #45d037;
+    background: url("../img/verlauf1b.jpg");
+    background-size: 100% 100%;
+}
+#status-6 {
+    background-color: #00ff3d;
+    background: url("../img/verlauf4.jpg");
+    background-size: 100% 100%;
+}
+
+/*applied to all state boxes*/
+.current-status-col, .not-current-status-col{
+    float: left;
+}
+
+.bodenprobe-subheading {
+    color: black;
+    font-size: 1.2em;
+}
+
+.text-current-state {
+    color: #289730;
+}
