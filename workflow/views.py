@@ -478,7 +478,7 @@ def auftrag_details_success_msg(request, auftrags_id, success):
     2: Payment Status successfully changed
     """
     if request.method == 'POST':
-        return auftrag_details(request, auftrags_id)
+        return order_details(request, auftrags_id)
     auftrag_dict = createAuftragDict(auftrags_id)
     if success == 1:
         auftrag_dict['msg_head'] = "Der Auftrag konnte erfolgreich erstellt werden!"

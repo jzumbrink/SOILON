@@ -5,8 +5,10 @@ from docx.shared import Mm
 from .models import Kunde, Auftrag, Bodenprobe, PpmValue
 from .color_bars import createImg
 from SoilonWorkflowSolutions import settings as project_settings
-from .config import microsoft_word_installed
+from .config import microsoft_word_installed, used_elements
 from docx2pdf import convert
+
+template_filename = 'tpl_4.docx'
 
 month_map = {
     1: "Januar",
@@ -53,13 +55,13 @@ def create_answer_pdf(soil_sample_id, filename):
     img_temp_folder = os.path.join(target_folder, 'temp')
     print(img_temp_folder)
 
-    img_filename_cd = os.path.join(img_temp_folder, 'img_{0}_{1}.png'.format(soil_sample_id, 'cd'))
-    img_filename_cu = os.path.join(img_temp_folder, 'img_{0}_{1}.png'.format(soil_sample_id, 'cu'))
-    img_filename_pb = os.path.join(img_temp_folder, 'img_{0}_{1}.png'.format(soil_sample_id, 'pb'))
-    img_filename_zn = os.path.join(img_temp_folder, 'img_{0}_{1}.png'.format(soil_sample_id, 'zn'))
-    img_filenames = [img_filename_cd, img_filename_cu, img_filename_pb, img_filename_zn]
+    # img_filename_cd = os.path.join(img_temp_folder, 'img_{0}_{1}.png'.format(soil_sample_id, 'cd'))
+    # img_filename_cu = os.path.join(img_temp_folder, 'img_{0}_{1}.png'.format(soil_sample_id, 'cu'))
+    # img_filename_pb = os.path.join(img_temp_folder, 'img_{0}_{1}.png'.format(soil_sample_id, 'pb'))
+    # img_filename_zn = os.path.join(img_temp_folder, 'img_{0}_{1}.png'.format(soil_sample_id, 'zn'))
+    # img_filenames = [img_filename_cd, img_filename_cu, img_filename_pb, img_filename_zn]
 
-    tpl_filename = os.path.join(project_settings.STATIC_ROOT, 'tpl_office', 'tpl_3.docx')
+    tpl_filename = os.path.join(project_settings.STATIC_ROOT, 'tpl_office', template_filename)
     tpl = DocxTemplate(tpl_filename)
 
     soil_sample = Bodenprobe.objects.get(pk=soil_sample_id)
@@ -68,10 +70,14 @@ def create_answer_pdf(soil_sample_id, filename):
 
     today = date.today()
 
-    createImg(img_filename_cd, 'cd', getPpmValue('cd', soil_sample_id))
-    createImg(img_filename_cu, 'cu', getPpmValue('cu', soil_sample_id))
-    createImg(img_filename_pb, 'pb', getPpmValue('pb', soil_sample_id))
-    createImg(img_filename_zn, 'zn', getPpmValue('zn', soil_sample_id))
+    # createImg(img_filename_cd, 'cd', getPpmValue('cd', soil_sample_id))
+    # createImg(img_filename_cu, 'cu', getPpmValue('cu', soil_sample_id))
+    # createImg(img_filename_pb, 'pb', getPpmValue('pb', soil_sample_id))
+    # createImg(img_filename_zn, 'zn', getPpmValue('zn', soil_sample_id))
+    img_filenames = {}
+    for element in used_elements:
+        img_filenames[element] = os.path.join(img_temp_folder, 'img_{0}_{1}.png'.format(soil_sample_id, element))
+        createImg(img_filenames[element], element, getPpmValue(element, soil_sample_id))
 
     context = {
         'title': customer.titel + ' ' if len(customer.titel) > 0 else '',
@@ -86,14 +92,20 @@ def create_answer_pdf(soil_sample_id, filename):
         'year': str(today.year),
         'heading': "Ihre Analyse",
         'address': "Sehr geehrte Frau" if customer.anrede == "Frau" or customer.geschlecht == 'w' else ("Sehr geehrter Herr" if customer.anrede == "Herr" or customer.geschlecht == 'm' else "Sehr geehrte/r Frau/Herr"),
-        'cd_img': InlineImage(tpl=tpl, image_descriptor=img_filename_cd, width=Mm(162)),
+        'cd_img': InlineImage(tpl=tpl, image_descriptor=img_filenames['cd'], width=Mm(162)),
         'cd_val': str(getPpmValue('cd', soil_sample_id)) + " ppm",
-        'cu_img': InlineImage(tpl=tpl, image_descriptor=img_filename_cu, width=Mm(162)),
+        'cu_img': InlineImage(tpl=tpl, image_descriptor=img_filenames['cu'], width=Mm(162)),
         'cu_val': str(getPpmValue('cu', soil_sample_id)) + " ppm",
-        'pb_img': InlineImage(tpl=tpl, image_descriptor=img_filename_pb, width=Mm(162)),
+        'pb_img': InlineImage(tpl=tpl, image_descriptor=img_filenames['pb'], width=Mm(162)),
         'pb_val': str(getPpmValue('pb', soil_sample_id)) + " ppm",
-        'zn_img': InlineImage(tpl=tpl, image_descriptor=img_filename_zn, width=Mm(162)),
+        'zn_img': InlineImage(tpl=tpl, image_descriptor=img_filenames['zn'], width=Mm(162)),
         'zn_val': str(getPpmValue('zn', soil_sample_id)) + " ppm",
+        'cr_img': InlineImage(tpl=tpl, image_descriptor=img_filenames['cr'], width=Mm(162)),
+        'cr_val': str(getPpmValue('cr', soil_sample_id)) + " ppm",
+        'ni_img': InlineImage(tpl=tpl, image_descriptor=img_filenames['ni'], width=Mm(162)),
+        'ni_val': str(getPpmValue('ni', soil_sample_id)) + " ppm",
+        'as_img': InlineImage(tpl=tpl, image_descriptor=img_filenames['as'], width=Mm(162)),
+        'as_val': str(getPpmValue('as', soil_sample_id)) + " ppm",
     }
 
     tpl.render(context=context)
