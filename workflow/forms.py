@@ -87,9 +87,19 @@ class UpdateAuftrag(forms.Form):
                                          initial=False)
 
 
-class UpdateSoilSampleStatus(forms.Form):
+class UpdateSoilSample(forms.Form):
     # TODO intial value
     status_id = forms.IntegerField(
         min_value=0,
         max_value=6,
     )
+
+    is_billing_address_sampling_point = forms.BooleanField(required=False)
+
+    alt_zip_code = forms.IntegerField(required=False)
+    alt_city = forms.CharField(max_length=50, required=False)
+    alt_street = forms.CharField(max_length=100, required=False)
+    alt_house_number = forms.CharField(max_length=10, required=False)
+    alt_country = forms.CharField(max_length=40, initial="Deutschland", required=False)
+    alt_address_suffix = forms.CharField(max_length=100, required=False)
+

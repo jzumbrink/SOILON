@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404, Http404, HttpResponse
-from .models import Kunde, Bodenprobe, Auftrag, PpmValue
+from .models import Kunde, Bodenprobe, Auftrag, PpmValue, Address
 from .forms import *
 from SoilonWorkflowSolutions import settings as project_settings
 from .pdf_handling import handle_bodenprobe_auswertung
@@ -513,8 +513,10 @@ def bodenprobe_details(request, bodenprobe_id):
     bodenprobe = get_object_or_404(Bodenprobe, pk=bodenprobe_id)
 
     if request.method == 'POST':
-        form = UpdateSoilSampleStatus(request.POST)
+        form = UpdateSoilSample(request.POST)
         if form.is_valid():
+            # TODO update/create alternate address
+            Bodenprobe.objects.filter(pk=bodenprobe_id).update(is_billing_address_sampling_point=form.cleaned_data['is_billing_address_sampling_point'])
             Bodenprobe.objects.filter(pk=bodenprobe_id).update(status=form.cleaned_data['status_id'])
         return HttpResponseRedirect(reverse(bodenprobe_details, kwargs={'bodenprobe_id': bodenprobe_id}))
 
@@ -550,6 +552,19 @@ def bodenprobe_details(request, bodenprobe_id):
 
     answer_filename = 'Auswertung-{0}-{1}-{2}.{3}'.format(kunde.vorname, kunde.nachname, bodenprobe.id,
                                                           'pdf' if microsoft_word_installed else 'docx')
+    initial_form_dict = {
+                          'status_id': bodenprobe.status,
+                          'is_billing_address_sampling_point': bodenprobe.is_billing_address_sampling_point,
+                      }
+
+    if bodenprobe.alt_sampling_point_address_id >= 0:
+        alt_address = get_object_or_404(Address, pk=bodenprobe.alt_sampling_point_address_id)
+        initial_form_dict['alt_zip_code'] = alt_address.zip_code
+        initial_form_dict['alt_city'] = alt_address.alt_city
+        initial_form_dict['alt_street'] = alt_address.alt_street
+        initial_form_dict['alt_house_number'] = alt_address.alt_house_number
+        initial_form_dict['alt_country'] = alt_address.alt_country
+        initial_form_dict['alt_address_suffix'] = alt_address.alt_address_suffix
 
     return render(request, 'workflow/bodenprobe_details.html',
                   {
@@ -559,7 +574,7 @@ def bodenprobe_details(request, bodenprobe_id):
                       'msg': msg,
                       'answer_filename': answer_filename,
                       'status': bodenprobe.status,
-                      'form': UpdateSoilSampleStatus()
+                      'form': UpdateSoilSample(initial=initial_form_dict),
                   }
                   )
 

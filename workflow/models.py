@@ -3,12 +3,11 @@ from .config import bodenprobe_preis
 
 
 class Kunde(models.Model):
+    # kunden_id wird als Integer Wert automatisch von Django erstellt
+    # dabei ist der primary_key dann read only
 
-    #kunden_id wird als Integer Wert automatisch von Django erstellt
-    #dabei ist der primary_key dann read only
-
-    nachname = models.CharField(max_length=50) #required
-    vorname = models.CharField(max_length=50) #required
+    nachname = models.CharField(max_length=50)  # required
+    vorname = models.CharField(max_length=50)  # required
     plz = models.IntegerField(blank=True)
     wohnort = models.CharField(max_length=50, blank=True)
     strasse = models.CharField(max_length=100, blank=True)
@@ -32,8 +31,26 @@ def getFilename(instance, filename):
     return "bodenproben/{0}".format(filename)
 
 
-class Bodenprobe(models.Model):
+class Auftrag(models.Model):
+    kunden_id = models.IntegerField()
+    anzahl_bodenproben = models.IntegerField(default=1)
+    notizen = models.TextField(blank=True)
+    preis = models.FloatField(default=bodenprobe_preis)
+    nachlass = models.FloatField(default=0)
+    bereits_gezahlt = models.BooleanField(default=False)
+    ergebnisse_zurueckgemeldet = models.IntegerField(default=0)
+    label_name = models.CharField(max_length=50, blank=True)
+    mail_auftrags_text = models.TextField(blank=True)
+    status = models.CharField(max_length=50, default="Neuer Auftrag")
+    eingangs_zeit = models.DateTimeField(null=True)
 
+    def __str__(self):
+        if self.label_name is None:
+            return "Auftrag(Nr. " + str(self.id) + ")"
+        return "Auftrag(Nr. " + str(self.id) + ") " + self.label_name
+
+
+class Bodenprobe(models.Model):
     auftrags_id = models.IntegerField()
     pdf_original = models.FileField(
         upload_to=getFilename,
@@ -50,6 +67,7 @@ class Bodenprobe(models.Model):
         default="*",
         blank=True,
     )
+    # TODO update Current State List
     """
     Current State List: (outdated)
     0: Auftrag ist gerade eingegangen -> Auftrag ins System richtig einbetten und Kundeninteraktion abwickeln
@@ -69,34 +87,25 @@ class Bodenprobe(models.Model):
 
     results_upload_time = models.DateTimeField(blank=True)
 
+    is_billing_address_sampling_point = models.BooleanField(default=False)
+    alt_sampling_point_address_id = models.IntegerField(blank=True, default=-1)
+
     def __str__(self):
         if self.label_name is None or self.label_name == '':
             return "Bodenprobe (Nr. " + str(self.id) + ")"
         return "Bodenprobe (Nr. " + str(self.id) + "): " + self.label_name
 
 
-class Auftrag(models.Model):
-
-    kunden_id = models.IntegerField()
-    anzahl_bodenproben = models.IntegerField(default=1)
-    notizen = models.TextField(blank=True)
-    preis = models.FloatField(default=bodenprobe_preis)
-    nachlass = models.FloatField(default=0)
-    bereits_gezahlt = models.BooleanField(default=False)
-    ergebnisse_zurueckgemeldet = models.IntegerField(default=0)
-    label_name = models.CharField(max_length=50, blank=True)
-    mail_auftrags_text = models.TextField(blank=True)
-    status = models.CharField(max_length=50, default="Neuer Auftrag")
-    eingangs_zeit = models.DateTimeField(null=True)
-
-    def __str__(self):
-        if self.label_name is None:
-            return "Auftrag(Nr. " + str(self.id) + ")"
-        return "Auftrag(Nr. " + str(self.id) + ") " + self.label_name
+class Address(models.Model):
+    zip_code = models.IntegerField(blank=True)
+    city = models.CharField(max_length=50, blank=True)
+    street = models.CharField(max_length=100, blank=True)
+    house_number = models.CharField(max_length=10, blank=True, null=True)
+    country = models.CharField(max_length=40, default="Deutschland")
+    address_suffix = models.CharField(max_length=100, blank=True)
 
 
 class PpmValue(models.Model):
-
     element = models.CharField(max_length=2)
     value = models.FloatField()
     bodenprobe_id = models.IntegerField()
