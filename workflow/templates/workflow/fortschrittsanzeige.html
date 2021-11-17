@@ -1,0 +1,18 @@
+<div class="col-8" id="zero-padding">
+<div class="background-bar">
+    {% if progress == 100 %}
+        <div class="progress-100" style="width:{{ progress }}%"></div>
+    {% elif progress >= 60 %}
+        <div class="progress-min-60" style="width:{{ progress }}%"></div>
+    {% elif progress >= 40 %}
+        <div class="progress-min-40" style="width:{{ progress }}%"></div>
+    {% else %}
+        <div class="progress-min-0" style="width:{{ progress }}%"></div>
+    {% endif %}
+    </div>
+</div>
+<div class="col-4" id="side-padding-small">
+    <div class="value-progress">
+        <b>{{ progress }}%</b>
+    </div>
+</div>

@@ -1,0 +1,60 @@
+{% extends 'workflow/basic_struct.html' %}
+
+{% block title %}
+Kunde - Uebersicht
+{% endblock %}
+
+{% block additional_headers %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/auftrags_uebersicht.css' %}">
+{% endblock %}
+
+{% block content %}
+    {% if erfolgreich_erstellt %}
+        <div class="success_message">
+            <h1>Der Kunde konnte erfolgreich erstellt werden!</h1>
+        </div>
+    {% endif %}
+    <div class="col-8" id="zero-padding">
+        <h1>{% if kunde.titel %}{{ kunde.titel }} {% endif %}{{ kunde.vorname }} {{ kunde.nachname }} (ID: {{ kunde_id }})</h1>
+    </div>
+    <div class="col-4" id="zero-padding">
+        <div class="inside-link">
+            <a href="{% url 'search_database' %}?choosen_class=KUN">Kunden</a>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="zeiten">
+        Erstelldatum: {{ kunde.registrierungs_zeit }}
+    </div>
+    {% include 'workflow/steckbrief_kunde.html' %}
+
+    <div>
+        <h3>Alle Aufträge ({{ anzahl_auftraege }})</h3>
+        <table class="auswertungs-tabelle">
+            <colgroup id="auftrag-label-col">
+                <col>
+            </colgroup>
+            <colgroup id="auftrag-status-col">
+                <col>
+            </colgroup>
+            <thead>
+                <tr class="head-row">
+                    <td><b>Auftrag</b></td>
+                    <td><b>Status</b></td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for auftrag in auftraege_liste %}
+                    <tr class="auftrags-daten-reihe">
+                        <td><a href="{% url 'order_details' order_id=auftrag.id %}">
+                            {{ auftrag.label_name }} ({{ auftrag.id }})</a>
+                        </td>
+                        <td>{{ auftrag.status }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
+{% endblock %}

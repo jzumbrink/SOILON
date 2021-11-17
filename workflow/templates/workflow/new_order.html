@@ -1,0 +1,49 @@
+{% extends 'workflow/basic_struct.html' %}
+
+{% block title %}
+Neuer Auftrag | Soilon Workflow
+{% endblock %}
+
+{% block additional_headers %}
+{% load static %}
+    <link rel="stylesheet" href="{% static 'css/auftrags_uebersicht.css' %}">
+    <link rel="stylesheet" href="{% static 'css/table_nav.css' %}">
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="form">
+    <div class="form-head">
+        <div class="form-heading">
+            <h1>Auftrag erstellen</h1>
+        </div>
+    </div>
+        <div class="form-body" id="form">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-attribut">Kunden ID*</div>
+
+                <div class="form-input">{{ form.kunden_id }}</div>
+                <div class="form-attribut">Anzahl an bestellten Bodenproben*</div>
+                <div class="form-input">{{ form.anzahl_bodenproben }}</div>
+                <div class="form-attribut">Custom name*</div>
+                <div class="form-input">{{ form.custom_name }}</div>
+                <div class="form-attribut">Preis (in €)*</div>
+                <div class="form-input">{{ form.preis }}</div>
+                <div class="form-attribut">Bereits bezahlt: {{ form.payment_received }}</div>
+                <div class="form-attribut">Sonstiges/Notiz</div>
+                <div class="form-input">{{ form.extra_info }}</div>
+                <div class="form-input">
+                    <div class="form-submit-button">
+                        <input type="submit" value="Bestätigen" id="form-submit-button">
+                    </div>
+                </div>
+                *notwendige Felder
+            </form>
+        </div>
+    </div>
+    {% include 'workflow/kunden_table.html' with kunden=kunden %}
+
+    <script src="{% static 'js/forms.js' %}"></script>
+{% endblock %}

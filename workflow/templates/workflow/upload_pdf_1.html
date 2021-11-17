@@ -1,0 +1,65 @@
+{% extends "workflow/basic_struct.html" %}
+
+{% block title %}
+Upload Pdf Schritt 1 | Soilon Workflow
+{% endblock %}
+
+{% block additional_headers %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/auftrags_uebersicht.css' %}">
+<link rel="stylesheet" href="{% static 'css/progress_bar.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h1>Bitte lade hier die Ergebnisse der Bodenprobe als Pdf-Datei hoch (Schritt 1 aus 2)</h1>
+    <div class="col-3" id="zero-padding">
+    <form method="post" enctype="multipart/form-data" action="{% url 'pdf_upload' %}?step=1">
+        {% csrf_token %}
+        <b>Auftrags ID:</b><br>{{ form.auftrags_id }}<br>
+        <input type="submit" value="Weiter">
+    </form>
+    </div>
+    <div class="col-9">
+    <table class="auswertungs-tabelle">
+        <colgroup id="id_col">
+            <col>
+        </colgroup>
+        <colgroup id="auftrag-name-col">
+            <col>
+        </colgroup>
+        <colgroup id="auftrag-kunde-col">
+            <col>
+        </colgroup>
+        <colgroup id="auftrag-count-bod-col">
+            <col>
+        </colgroup>
+        <colgroup id="auftrag-progress-col">
+            <col>
+        </colgroup>
+        <thead>
+            <tr class="head-row">
+                <td><b>id</b></td>
+                <td><b>Auftrag</b></td>
+                <td><b>Kunde</b></td>
+                <td><b>Anzahl Bodenproben</b></td>
+                <td><b>Fertige Bodenproben</b></td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for auftrag, name_kunde, progress in auftraege_liste %}
+                <tr class="auftrags-daten-reihe">
+                    <td>{{ auftrag.id }}</td>
+                    <td><a href="{% url 'order_details' order_id=auftrag.id %}">
+                         {{ auftrag.label_name }}
+                    </a></td>
+                    <td><a href="{% url 'kunde_details' kunde_id=auftrag.kunden_id %}">
+                        {{ name_kunde }}
+                    </a> </td>
+                    <td>{{ auftrag.anzahl_bodenproben }}</td>
+                    <td>{% include 'workflow/fortschrittsanzeige.html' with progress=progress %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+{% endblock %}

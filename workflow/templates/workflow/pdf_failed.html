@@ -1,0 +1,11 @@
+{% extends 'workflow/basic_struct.html' %}
+
+{% block title %}
+Pdf-Upload Failed
+{% endblock %}
+
+{% block content %}
+<h1>Der Pdf-Upload hat nicht funktioniert</h1>
+<p>{{ error }}</p>
+    <a href="{% url 'pdf_upload' %}">Zurück zum Pdf-Upload</a>
+{% endblock %}

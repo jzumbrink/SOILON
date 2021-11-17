@@ -1,0 +1,19 @@
+{% extends 'workflow/basic_struct.html' %}
+
+{% block title %}
+Pdf Datei erfolgreich hochgeladen
+{% endblock %}}
+
+{% block additional_headers %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/pdf_succeed.css' %}">
+{% endblock %}
+
+{% block content %}
+    <p>Die pdf-Datei wurde erfolgreich hochgeladen und kann nun im System abgerufen werden. Die Kundennummer war ebenfalls korrekt.</p>
+    <p><a href="{% url 'main' %}">Zurück zu Home</a> </p>
+    <p>Die Nachricht für die Kunden steht unten</p>
+    <div class="text-box">
+        <p class="kunden_text">{{ kunden_text }}</p>
+    </div>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'workflow/basic_struct.html' %}
+
+{% block title %}
+{% if kun_selected %}Kundendatenbank durchsuchen
+{% elif auf_selected %}Aufträge durchsuchen
+{% else %}Bodenproben durchsuchen{% endif %} | Soilon Workflow
+{% endblock %}
+
+{% block additional_headers %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/table_nav.css' %}">
+    <link rel="stylesheet" href="{% static 'css/auftrags_uebersicht.css' %}">
+    <link rel="stylesheet" href="{% static 'css/db_search.css' %}">
+{% endblock %}
+
+{% block content %}
+    <form method="GET" action="{% url 'search_database' %}" id="db-class-form">
+        <div class="col-7" id="zero-padding">
+                <div class="select-menu-db">
+                    <select id="classes" name="choosen_class">
+                        <option value="KUN" {% if kun_selected %}selected{% endif %}>Kundendatenbank durchsuchen</option>
+                        <option value="AUF" {% if auf_selected %}selected{% endif %}>Aufträge durchsuchen</option>
+                        <option value="BOD" {% if bod_selected %}selected{% endif %} label="Bodenproben suchen"></option>
+                    </select>
+                </div>
+        </div>
+        <div class="col-5" id="zero-padding">
+            <input type="search" id="suche" name="search" placeholder="Suchbegriff eingeben..." value="{{ suchword }}"><button class="search_button">suchen</button>
+        </div>
+
+    <div class="col-12" id="zero-padding">
+        <p class="kunden-tabelle-heading"><b>
+        Suchergebnisse{% if suchword %} für "{{ suchword }}"{% endif %}:
+        </b></p>
+    <table class="auswertungs-tabelle" id="data-results">
+        <thead>
+            <tr class="head-row">
+                {% if suchergebniss_spalten %}<td>ID</td>{% endif %}
+                {% for kriterium in suchergebniss_spalten %}
+                    <td>{{ kriterium }}</td>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for obj in obj_daten %}
+                <tr class="auftrags-daten-reihe">
+                    <td><a href="{% url baselink obj.id %}">{{ obj.id }}</a></td>
+                    {% for wert in obj.data %}
+                        <td>{{ wert }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="col-2" id="zero-padding">
+        <div class="table-nav-button">
+            <input type="submit" value="Vorherige Seite" id="previous_page">
+        </div>
+    </div>
+    <div class="col-8" id="zero-padding">
+        <div class="table-nav-bar" id="data-results-info">
+            <div class="nav-table">{% if anzahl_ergebnisse == 1 %}Es wurde ein Ergebnis gefunden
+            {% elif anzahl_ergebnisse > 1 %}Es wurden {{ anzahl_ergebnisse }} Ergebnisse gefunden!<br>
+                Seite <input type="number" min="1" max="{{ count_pages }}" value="{{ init_page }}" class="num-in" name="page" id="page"> von {{ count_pages }}<br>
+                <input type="range" min="1" max="100" value="{{ init_results_per_page }}" class="num-in" id="results_per_page_range">
+                <input type="number" min="1" max="100" value="{{ init_results_per_page }}" class="num-in" name="results_per_page" id="results_per_page_num">
+                Ergebnisse pro Seite
+            {% elif anzahl_ergebnisse == -1 %}Es wurden leider keine Ergebnisse für die Suchanfrage gefunden
+            {% elif anzahl_ergebnisse == -2 %}Suchbegriff im Suchfeld eingeben...
+            {% endif %}</div>
+        </div>
+    </div>
+    <div class="col-2" id="zero-padding">
+        <div class="table-nav-button">
+            <input type="submit" value="Nächste Seite" id="next_page">
+        </div>
+    </div>
+
+
+    </form>
+
+    <div class="warte-anzeige">
+        <p id="schriftzug-warten">Suchergebnisse werden geladen...</p>
+    </div>
+
+    <script src="{% static 'js/datenbank_durchsuchen.js' %}"></script>
+
+{% endblock %}
+

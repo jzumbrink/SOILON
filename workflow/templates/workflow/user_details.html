@@ -1,0 +1,17 @@
+<div class="information-box">
+    <div>
+        <div class="col-8" id="zero-padding">
+            Zurzeit eingeloggt als:
+        </div>
+        <div class="col-4" id="zero-padding">
+            {% load static %}
+            <img class="small-logo" src="{% static 'img/soilon_logo_4.png' %}">
+        </div>
+    </div>
+    <div class="usernames">
+        {{ user.first_name }} {{ user.last_name }} ({{ user.username }})
+    </div>
+    <div>
+        <a href="{% url 'admin:logout' %}"><button class="logout-button">Logout</button></a>
+    </div>
+</div>

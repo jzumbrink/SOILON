@@ -1,0 +1,51 @@
+{% extends 'workflow/basic_struct.html' %}
+
+{% block title %}
+Kunde hinzufügen | Soilon Workflow
+{% endblock %}
+
+{% block additional_headers %}
+{% load static %}
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="form" id="form">
+        <div class="form-head">
+            <div class="form-heading">
+                <h1>Kunde Anlegen</h1>
+            </div>
+        </div>
+        <div class="form-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-attribut">Vorname* / Nachname*</div>
+            <div class="form-input">{{ form.vorname }}{{ form.nachname }}</div>
+            <div class="form-attribut">Geschlecht</div>
+            <div class="form-input">{{ form.geschlecht }}</div>
+            <div class="form-attribut">Titel:</div>
+            <div class="form-input">{{ form.titel}}</div>
+            <div class="form-attribut">Email-Adresse*</div>
+            <div class="form-input">{{ form.email }}</div>
+            <div class="form-attribut">Telefonnummer*</div>
+            <div class="form-input">{{ form.telefonnummer }}</div>
+            <div class="form-attribut">Land*</div>
+            <div class="form-input">{{ form.land }}</div>
+            <div class="form-attribut">Postleitzahl* / Ort*</div>
+            <div class="form-input">{{ form.plz }}{{ form.wohnort }}</div>
+            <div class="form-attribut">Strasse* / Hausnummer*</div>
+            <div class="form-input">{{ form.strasse }}{{ form.hausnummer }}</div>
+            <div class="form-attribut">Adresszusatz</div>
+            <div class="form-input">{{ form.adresszusatz }}</div>
+             <div class="form-input">
+                <div class="form-submit-button">
+                    <input type="submit" value="Bestätigen" id="form-submit-button">
+                </div>
+             </div>
+            *notwendige Felder
+        </form>
+        </div>
+    </div>
+
+     <script src="{% static 'js/forms.js' %}"></script>
+{% endblock %}

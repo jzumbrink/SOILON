@@ -1,0 +1,34 @@
+{% extends 'workflow/basic_struct.html' %}
+
+{% block title %}
+Upload Pdf Schritt 2 | Soilon Workflow
+{% endblock %}
+
+{% block content %}
+    <h1>Bitte lade hier die Ergebnisse der Bodenprobe als Pdf-Datei hoch (Schritt 2 aus 2)</h1>
+    <div>
+        <div>
+            <h4>Auftrag:</h4>
+            {% include 'workflow/steckbrief_auftrag.html' with a_id=auftrag.id a_label_name=auftrag.label_name %}
+            <h4>Kunde:</h4>
+            Name (ID): {{ kunden_daten.vorname }} {{ kunden_daten.nachname }} ({{ kunden_daten.id }})<br>
+            Straße: {{ kunden_daten.strasse }} {{ kunden_daten.hausnummer }} {{ kunden_daten.adresszusatz}}<br>
+            Telefonnummer: {{ kunden_daten.telefonnummer }}<br>
+            E-Mail: {{ kunden_daten.email }}<br>
+            <b>Zulässige Bodenproben IDs: {% for b in bodenproben_list %}{{ b }}, {% endfor %}{{ letzte_bodenprobe_id }}</b>
+        </div>
+        <div>
+            <form method="post" enctype="multipart/form-data" action="{% url 'pdf_upload' %}?step=2">
+                {% csrf_token %}
+                <br>
+                <b>Bodenprobe ID*:</b><br>{{ form.bodenprobe_id }}<br>
+                <b>Pdf-Dokument mit der Analyse*:</b><br>{{ form.pdf_bodenprobe_file }}<br>
+                *notwendig<br>
+                <input type="submit" value="Pdf Hochladen">
+            </form>
+        </div>
+    <div>
+
+    </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends 'workflow/basic_struct.html' %}
+
+{% block title %}
+Übersicht | Soilon Workflow
+{% endblock %}
+
+{% block additional_headers %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/auftrags_uebersicht.css' %}">
+<link rel="stylesheet" href="{% static 'css/progress_bar.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<h1>Aufträge</h1>
+    <table class="auswertungs-tabelle">
+        <colgroup id="id_col">
+            <col>
+        </colgroup>
+        <colgroup id="details_col">
+            <col>
+        </colgroup>
+        <colgroup id="count-bodenprobe-col">
+            <col>
+        </colgroup>
+        <colgroup id="fortschritt_col">
+            <col>
+        </colgroup>
+        <thead>
+        <tr class="head-row">
+            <td><b>id</b></td>
+            <td><b>Details</b></td>
+            <td><b>Anzahl Bodenproben</b></td>
+            <td><b>Fortschritt</b></td>
+        </tr>
+        </thead>
+        <tbody>
+            {% for auftrag in auftraege %}
+                <tr class="auftrags-daten-reihe">
+                    <td>{{ auftrag.id }}</td>
+                    <td>
+                        <div class="details-cell"><a href="{% url 'order_details' order_id=auftrag.id%}"> {{ auftrag.label_name }}
+                            Kunde: {{ auftrag.vorname }} {{ auftrag.nachname }}</a>
+                        </div>
+                    </td>
+                    <td>
+                        {{ auftrag.count_bodenproben }}
+                    </td>
+                    <td>
+                        <div>
+                            <div class="col-12" id="zero-padding">
+                                <div class="col-4" id="zero-padding">
+                                    <div class="fortschritt-label">Kundendaten vollständig:</div>
+                                </div>
+                                <div class="col-8" id="zero-padding">
+
+                                        {% include 'workflow/fortschrittsanzeige.html' with progress=auftrag.prg_kundendaten %}
+
+                                </div>
+                            </div>
+                            <div class="col-12" id="zero-padding">
+                                <div class="col-4" id="zero-padding">
+                                    <div class="fortschritt-label">Proben vorliegend:</div>
+                                </div>
+                                <div class="col-8" id="zero-padding">
+
+                                        {% include 'workflow/fortschrittsanzeige.html' with progress=auftrag.prg_probe_vorliegend %}
+
+                                </div>
+                            </div>
+                            <div class="col-12" id="zero-padding">
+                                <div class="col-4" id="zero-padding">
+                                    <div class="fortschritt-label">Proben getrocknet:</div>
+                                </div>
+                                <div class="col-8" id="zero-padding">
+
+                                        {% include 'workflow/fortschrittsanzeige.html' with progress=auftrag.prg_probe_getrocknet %}
+
+                                </div>
+                            </div>
+                            <div class="col-12" id="zero-padding">
+                                <div class="col-4" id="zero-padding">
+                                    <div class="fortschritt-label">Proben Analysiert:</div>
+                                </div>
+                                <div class="col-8" id="zero-padding">
+
+                                        {% include 'workflow/fortschrittsanzeige.html' with progress=auftrag.prg_probe_analysiert %}
+
+                                </div>
+                            </div>
+                            <div class="col-12" id="zero-padding">
+                                <div class="col-4" id="zero-padding">
+                                    <div class="fortschritt-label">Ergebnisse weitergeleitet:</div>
+                                </div>
+                                <div class="col-8" id="zero-padding">
+
+                                        {% include 'workflow/fortschrittsanzeige.html' with progress=auftrag.prg_ergebnisse_weiter %}
+
+                                </div>
+                            </div>
+                            <div class="fortschritt-part">
+                                <div class="col-4" id="zero-padding">
+                                    <div class="fortschritt-label">Zahlungsstatus:</div>
+                                </div>
+                                <div class="col-8" id="zero-padding">
+                                    <div class="bezahlt-checkbox">
+                                        {% if auftrag.bool_bezahlt %}
+                                            <div class="already-payed">
+                                                Bereits bezahlt
+                                            </div>
+                                        {% else %}
+                                            <div class="not-payed">
+                                                Noch nicht bezahlt
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+{% endblock %}

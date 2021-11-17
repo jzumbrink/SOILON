@@ -1,0 +1,15 @@
+{% extends 'workflow/basic_struct.html' %}
+
+{% block title %}
+Kunde erfolgreich registriert
+{% endblock %}
+
+{% block content %}
+<h1>Der Kunde wurde erfolgreich registriert</h1>
+<p class="text-umbruch">
+Id: {{ kunden_daten.id }}
+Nachname: {{ kunden_daten.nachname }}
+Vorname: {{ kunden_daten.vorname }}
+</p>
+<a href="{% url 'kunde_details' kunde_id=kunden_daten.id %}">Kunde anzeigen lassen</a>
+{% endblock %}

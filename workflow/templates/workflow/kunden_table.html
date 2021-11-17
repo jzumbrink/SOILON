@@ -1,0 +1,39 @@
+<!--
+Benötigte css-files:
+css/table_nav.css
+css/auftrags_uebersicht.css
+
+Auf diese muss im Block additional_headers verweist werden, wenn diese Datei inkludiert wird
+-->
+<p class="kunden-tabelle-heading"><b>
+    Kundenliste (Neueste zuerst):
+</b></p>
+        <table class="auswertungs-tabelle">
+            <thead>
+                <tr class="head-row">
+                    <td>id</td>
+                    <td>Nachname</td>
+                    <td>Vorname</td>
+                </tr>
+            </thead>
+            {% for kunde in kunden %}
+                <tr class="auftrags-daten-reihe">
+                <td>{{ kunde.id }}</td>
+                    <td><a href="{% url 'kunde_details' kunde_id=kunde.id %}">{{ kunde.nachname }}</a></td>
+                <td>{{ kunde.vorname }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% if anzahl_ergebnisse %}
+            <div class="table-nav-bar">
+                <div class="col-12" id="zero-padding">
+                    <div class="seitenangabe">{% if anzahl_ergebnisse == 1 %}Es wurde ein Ergebnis gefunden
+                    {% elif anzahl_ergebnisse > 1 %}Es wurden {{ anzahl_ergebnisse }} Ergebnisse gefunden
+                    {% elif anzahl_ergebnisse == -1 %}Es wurden leider keine Ergebnisse für die Suchanfrage gefunden
+                    {% elif anzahl_ergebnisse == -2 %}Suchbegriff im Suchfeld eingeben...
+                    {% endif %}</div>
+                </div>
+            </div>
+        {% else %}
+        {% include 'workflow/table_navigation.html' with zureck_page=zurueck_url weiter_page=weiter_url url=url get_name='page_customers' %}
+        {% endif %}

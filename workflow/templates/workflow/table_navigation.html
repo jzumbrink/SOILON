@@ -1,0 +1,25 @@
+<div class="table-nav-bar">
+    <div class="col-3" id="zero-padding">
+        <div class="zurueck">
+            {% if zureck_page %}<a href="{% url url %}?{{ get_name }}={{ zureck_page }}"><button class="direction-button">Zurück</button></a>
+            {% else %}
+                <div class="not-usable">
+                    Zurück
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-6" id="zero-padding">
+        <div class="seitenangabe">Seite {{ aktuelle_seite }} von {{ seiten_ges }}</div>
+    </div>
+    <div class="col-3" id="zero-padding">
+        <div class="weiter">
+            {% if weiter_page %}<a href="{% url url %}?{{ get_name }}={{ weiter_page }}"><button class="direction-button">Weiter</button></a>
+            {% else %}
+                <div class="not-usable">
+                    Weiter
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

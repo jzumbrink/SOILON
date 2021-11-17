@@ -1,0 +1,9 @@
+<div class="important">
+<p class="text-umbruch">{% if a_id %}<a href="{% url 'order_details' order_id=a_id %}">{{ a_label_name }} ({{ a_id }})</a> {% endif %}
+Status: {{ auftrag.status }}
+Preis: {{ auftrag.preis }} €
+Notiz: {% if auftrag.notizen %}{{ auftrag.notizen }}{% else %}-{% endif %}
+Anzahl Bodenproben: {{ auftrag.anzahl_bodenproben }}
+{% if no_payment_details %}{% else %}Bereits bezahlt: {% if auftrag.bereits_gezahlt %}Ja{% else %}Nein{% endif %}{% endif %}
+</p>
+</div>

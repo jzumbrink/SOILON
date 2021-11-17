@@ -1,0 +1,19 @@
+{% extends 'workflow/basic_struct.html' %}
+
+{% block title %}
+Ein Fehler ist aufgetreten
+{% endblock %}
+
+{% block content %}
+    <h1>
+    {% if error_title == None %}
+        Ein Fehler ist aufgetreten
+        {% else %}
+         {{ error_title }}
+    {% endif %}
+    </h1>
+<p class="text-umbruch">
+    {{ error_content }}
+</p>
+    <a href="{% url 'main' %}">Zurück zu Home</a>
+{% endblock %}

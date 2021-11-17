@@ -1,0 +1,19 @@
+{% extends 'workflow/basic_struct.html' %}
+
+{% block title %}
+    Messung - {{ messung_id }}
+{% endblock %}
+
+{% block content %}
+<h1>Messung {{ messung_id }}</h1>
+    <p>Kunden ID: {{ kunden_id }}</p>
+    <p>Dateien Pfad: {{ data_path }}</p>
+    <p>Filename (Anfang): {{ filename }}</p>
+    <p>Mail Text:</p>
+    <div class="text-box">
+        <p class="kunden_text">{{ text }}</p>
+    </div>
+    <p>Extra Informationen: {{ info }}</p>
+
+<a href="{% url 'display_bodenproben' %}">Zurück zur Liste der Bodenproben</a>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Soilon Workflow Solutions{% endblock %}</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'css/general.css' %}">
+    <link rel="icon" href="{% static 'img/verlauf1b.jpg' %}">
+    {% block additional_headers %}
+    {% endblock %}
+</head>
+<body>
+
+            <!-- Menu -->
+            <div class="complete_top_nav">
+                    <table>
+                        <tr>
+                            <td>
+                                <div id="outer_logo">
+                                    <div id="inner_logo">
+                                        <a href="{% url 'main' %}">
+                                            <img src="{% static 'img/soilon_logo_2.png' %}" alt="Soilon Logo" width="inherit" height="inherit">
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <a href="{% url 'main' %}"><button class="main-button">Home</button></a>
+                            </td>
+                            <td>
+                                <a href="{% url 'new_customer' %}"><button class="menu-button">Kunde Anlegen</button> </a>
+                            </td>
+                            <td>
+                                <a href="{% url 'new_order' %}"><button class="menu-button">Auftrag erstellen</button></a>
+                            </td>
+                            <td>
+                                <a href="{% url 'pdf_upload' %}"><button class="menu-button">Pdf Upload</button></a>
+                            </td>
+                            <td>
+                                <a href="{% url 'order_overview' %}"><button class="menu-button">Aufträge/Bodenproben</button> </a>
+                            </td>
+                            <td>
+                                <a href="{% url 'search_database' %}"><button class="menu-button">Datenbank durchsuchen</button> </a>
+                            </td>
+                            <td>
+                                <a href="{% url 'w_guide' %}"><button class="menu-button">Informationen</button></a>
+                            </td>
+                            <td>
+                                <a href="{% url 'analytics' %}"><button class="menu-button">Analytics</button> </a>
+                            </td>
+                            <td>
+                                <a href="{% url 'admin:index' %}"><button class="admin-button">Admin</button> </a>
+                            </td>
+                        </tr>
+                    </table>
+            </div>
+
+            <div class="col-1" id="rand"></div>
+
+            <div class="col-10" id="general-content">
+                    {% block content %}
+                    {% endblock %}
+            </div>
+            <div class="col-1" id="rand"></div>
+</body>
+</html>

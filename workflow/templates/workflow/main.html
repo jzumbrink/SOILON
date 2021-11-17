@@ -1,0 +1,63 @@
+{% extends 'workflow/basic_struct.html' %}
+
+{% block title %}
+Home | Soilon Workflow
+{% endblock %}
+
+{% block additional_headers %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/auftrags_uebersicht.css' %}">
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+<link rel="stylesheet" href="{% static 'css/table_nav.css' %}">
+<link rel="stylesheet" href="{% static 'css/user_informations.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h1>Welcome to Soilon Workflow</h1>
+    <div class="col-8">
+        <div class="symbol-images">
+            <div class="col-12" id="zero-padding">
+                <div class="img-erde">
+                    <img src="{% static 'img/erde_symbolbild.png' %}" alt="Erdschichten auf einer Schaufel">
+                </div>
+                <a href="{% url 'new_customer' %}">
+                    <button class="main-topic-button" id="button-kunde-anlegen">
+                        <h1 class="heading-main-button">
+                            Neuen Kunden Anlegen
+                        </h1>
+                    </button>
+                </a>
+            </div>
+            <div class="col-12" id="zero-padding">
+                <div class="img-erde">
+                    <img src="{% static 'img/presse_symbolbild.jpg' %}" alt="Presse Symbolbild">
+                </div>
+                <a href="{% url 'new_order' %}">
+                    <button class="main-topic-button" id="button-auftrag-erstellen">
+                        <h1 class="heading-main-button">Neuen Auftrag erstellen</h1>
+                    </button>
+                </a>
+            </div>
+            <div class="col-12" id="zero-padding">
+                <div class="img-erde">
+                    <img src="{% static 'img/proben_symbolbild.jpg' %}" alt="Mehrere Bodenproben in Schalen">
+                </div>
+                <a href="{% url 'pdf_upload' %}">
+                    <button class="main-topic-button" id="button-analyse-hochladen">
+                        <h1 class="heading-main-button">Analyse für eine Bodenprobe hochladen</h1>
+                    </button>
+                </a>
+            </div>
+            <div class="col-12" id="zero-padding">
+                <div class="img-erde">
+                    <img src="{% static 'img/drehscheibe-symbolbild.jpg' %}" alt="Drehscheibe">
+                </div>
+            </div>
+        </div>
+        <a href="http://www.soilon.de">Soilon-Website</a>
+    </div>
+    <div class="col-4">
+        {% include 'workflow/user_details.html' with user=user %}
+        {% include 'workflow/kunden_table.html' with kunden=kunden %}
+    </div>
+{% endblock %}

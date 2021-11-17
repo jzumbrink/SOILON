@@ -1,0 +1,65 @@
+{% extends 'workflow/basic_struct.html' %}
+
+{% block title %}
+Bodenprobe
+{% endblock %}
+
+{% block additional_headers %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/auftrags_uebersicht.css' %}">
+<link rel="stylesheet" href="{% static 'css/bodenprobe_status.css' %}">
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+{% endblock %}
+
+{% block content %}
+    {% if msg %}
+        <div class="success_message">
+            <h1>{{ msg }}</h1>
+        </div>
+    {% endif %}
+    <div class="col-12" id="zero-padding">
+        <h1>Nr. {{ bodenproben.0.id }}: {{ bodenproben.0.label_name }}</h1>
+    </div>
+    <div class="col-12">
+        <div class="zeiten">
+            Ergebnisse hochgeladen: {% if bodenprobe.results_upload_time %}{{ bodenprobe.results_upload_time }}{% else %}noch nicht hochgeladen{% endif %}
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="bodenprobe-subheading">
+            Status der Bodenprobe: {{ status }}. {% if status == 0 %}Der Auftrag ist neu{% elif status == 1 %}Bodenprobe liegt vor{% elif status == 2 %}Bodenprobe wird getrocknet{% elif status == 3 %}Bodenprobe wurde gemahlen{% elif status == 4 %}Bodenprobe ist ein Pressling{% elif status == 5 %}Das Ergenis der Analyse liegt vor{% elif status == 6 %}Dem Kunde wurde geantwortet. Die Bodenprobe gilt als abgeschlossen{% endif %}
+        </div>
+        <div>
+            {% include 'workflow/soil_sample_details/status_table.html' with status_list=status_list form=form %}
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="bodenprobe-subheading">
+            Ergebnisse:
+        </div>
+        <div class="elemente-symbol">
+            {% include 'workflow/table_soil_sample_details.html' with soil_sample_list=bodenproben %}
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="status">
+        <h3></h3>
+    </div>
+    </div>
+    <div class="col-12">
+        <div class="files">
+            <a href="{% url 'download_file' inner_folder="ana_answer" filename=answer_filename %}">Antwort als Pdf generieren</a>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="answer"></div>
+    </div>
+    <div class="col-6">
+        <a href="{% url 'order_details' order_id=auftrag.id %}"><h2>{{ auftrag.label_name }} ({{ auftrag.id }})</h2></a>
+        {% include 'workflow/steckbrief_auftrag.html' %}
+    </div>
+    <div class="col-6">
+        <a href="{% url 'kunde_details' kunde_id=kunde.id %}"><h2>{{ kunde.vorname }} {{ kunde.nachname }} ({{ kunde.id }})</h2></a>
+        {% include 'workflow/steckbrief_kunde.html' %}
+    </div>
+{% endblock %}

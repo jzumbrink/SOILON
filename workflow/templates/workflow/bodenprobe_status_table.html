@@ -1,0 +1,130 @@
+<div class="status-bodenprobe">
+    <!--0. Status-->
+    <div class="{% if status == 0 %}current-status-col{% else %}not-current-status-col{% endif %}">
+        {% if status == 0 %}
+        <div class="big-status">
+                Hallo
+        </div>
+        {% else %}
+        <div class="small-status" id="status-0">
+            <div class="status-number">
+                0.
+            </div>
+            <div class="status-short-desc">
+                Auftrag ist neu
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!--1. Status-->
+    <div class="{% if status == 1 %}current-status-col{% else %}not-current-status-col{% endif %}">
+        {% if status == 1 %}
+        <div class="big-status">
+                Hallo
+        </div>
+        {% else %}
+        <div class="small-status" id="status-1">
+            <div class="status-number">
+                1.
+            </div>
+            <div class="status-short-desc">
+                Bodenprobe liegt vor
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!--2. Status-->
+    <div class="{% if status == 2 %}current-status-col{% else %}not-current-status-col{% endif %}">
+        {% if status == 0 %}
+        <div class="big-status">
+                Hallo
+        </div>
+        {% else %}
+        <div class="small-status" id="status-2">
+            <div class="status-number">
+                2.
+            </div>
+            <div class="status-short-desc">
+                Trocknen
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!--3. Status-->
+    <div class="{% if status == 3 %}current-status-col{% else %}not-current-status-col{% endif %}">
+        {% if status == 0 %}
+        <div class="big-status">
+                Hallo
+        </div>
+        {% else %}
+        <div class="small-status" id="status-3">
+            <div class="status-number">
+                3.
+            </div>
+            <div class="status-short-desc">
+                Mahlen
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!--4. Status-->
+    <div class="{% if status == 4 %}current-status-col{% else %}not-current-status-col{% endif %}">
+        {% if status == 4 %}
+        <div class="big-status">
+                Hallo
+        </div>
+        <div class="text-current-state">
+            Aktueller Status: {{ status }}
+        </div>
+        {% else %}
+        <div class="small-status" id="status-4">
+            <div class="status-number">
+                4.
+            </div>
+            <div class="status-short-desc">
+                Pressling
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!--5. Status-->
+    <div class="{% if status == 5 %}current-status-col{% else %}not-current-status-col{% endif %}">
+        {% if status == 0 %}
+        <div class="big-status">
+                Hallo
+        </div>
+        {% else %}
+        <div class="small-status" id="status-5">
+            <div class="status-number">
+                5.
+            </div>
+            <div class="status-short-desc">
+                Analyse
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!--6. Status-->
+    <div class="{% if status == 6 %}current-status-col{% else %}not-current-status-col{% endif %}">
+        {% if status == 0 %}
+        <div class="big-status">
+                Hallo
+        </div>
+        {% else %}
+        <div class="small-status" id="status-6">
+            <div class="status-number">
+                6.
+            </div>
+            <div class="status-short-desc">
+                Kunde Antworten
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>

@@ -1,0 +1,8 @@
+<div class="important">
+    <p class="text-umbruch">
+        E-Mail: {{ kunde.email }}
+        Telefonnummer: {{ kunde.telefonnummer }}
+        Addresse: {{ kunde.strasse }} {{ kunde.hausnummer }}{% if kunde.addresszusatz %} ({{ kunde.addresszusatz }}){% endif %}, {{ kunde.plz }} {{ kunde.wohnort }} ({{ kunde.land }})
+        Geschlecht: {{ kunde.geschlecht }} ({{ kunde.anrede }})
+    </p>
+</div>
