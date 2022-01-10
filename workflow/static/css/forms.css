@@ -43,6 +43,24 @@
     /*some parts of the styling of the buttons are outsourced to forms.js to be applied dynamically*/
 }
 
+.form-alone-submit-button {
+    background-color: #afafaf;
+    color: #252525;
+    transition: width 1.2s ease-in-out, margin-left 1.5s ease-in-out;
+}
+
+.soil-sample-save-button-half {
+    margin-left: 0px;
+}
+
+.soil-sample-save-button-full {
+    margin-left: 25%;
+}
+
+.form-alone-submit-button-wrapper {
+    transition: width 1.2s ease-in-out, margin-left 1.2s ease-in-out;
+}
+
 .form-input, .form-attribut {
     margin-top: 10px;
     margin-bottom: 10px;
@@ -58,3 +76,16 @@
     padding: 10px
 }
 
+.small-form-attribut {
+
+}
+
+.small-form-housenumber input{
+    width: 50px;
+    margin-left: 10px;
+}
+
+.small-form-zip-code input{
+    width: 80px;
+    margin-right: 10px;
+}

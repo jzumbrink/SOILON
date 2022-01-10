@@ -518,6 +518,30 @@ def bodenprobe_details(request, bodenprobe_id):
             # TODO update/create alternate address
             Bodenprobe.objects.filter(pk=bodenprobe_id).update(is_billing_address_sampling_point=form.cleaned_data['is_billing_address_sampling_point'])
             Bodenprobe.objects.filter(pk=bodenprobe_id).update(status=form.cleaned_data['status_id'])
+            if not form.cleaned_data['is_billing_address_sampling_point']:
+                if bodenprobe.alt_sampling_point_address_id != -1:
+                    # Adresse aktualisieren
+                    Address.objects.filter(pk=bodenprobe.alt_sampling_point_address_id).update(
+                        zip_code=form.cleaned_data['alt_zip_code'],
+                        city=form.cleaned_data['alt_city'],
+                        street=form.cleaned_data['alt_street'],
+                        house_number=form.cleaned_data['alt_house_number'],
+                        country=form.cleaned_data['alt_country'],
+                        address_suffix=form.cleaned_data['alt_address_suffix']
+                    )
+                else:
+                    # neue Adresse eintragen
+                    address = Address.objects.create(
+                        zip_code=form.cleaned_data['alt_zip_code'],
+                        city=form.cleaned_data['alt_city'],
+                        street=form.cleaned_data['alt_street'],
+                        house_number=form.cleaned_data['alt_house_number'],
+                        country=form.cleaned_data['alt_country'],
+                        address_suffix=form.cleaned_data['alt_address_suffix']
+                    )
+                    Bodenprobe.objects.filter(pk=bodenprobe.id).update(
+                        alt_sampling_point_address_id=address.id
+                    )
         return HttpResponseRedirect(reverse(bodenprobe_details, kwargs={'bodenprobe_id': bodenprobe_id}))
 
     try:
@@ -560,11 +584,11 @@ def bodenprobe_details(request, bodenprobe_id):
     if bodenprobe.alt_sampling_point_address_id >= 0:
         alt_address = get_object_or_404(Address, pk=bodenprobe.alt_sampling_point_address_id)
         initial_form_dict['alt_zip_code'] = alt_address.zip_code
-        initial_form_dict['alt_city'] = alt_address.alt_city
-        initial_form_dict['alt_street'] = alt_address.alt_street
-        initial_form_dict['alt_house_number'] = alt_address.alt_house_number
-        initial_form_dict['alt_country'] = alt_address.alt_country
-        initial_form_dict['alt_address_suffix'] = alt_address.alt_address_suffix
+        initial_form_dict['alt_city'] = alt_address.city
+        initial_form_dict['alt_street'] = alt_address.street
+        initial_form_dict['alt_house_number'] = alt_address.house_number
+        initial_form_dict['alt_country'] = alt_address.country
+        initial_form_dict['alt_address_suffix'] = alt_address.address_suffix
 
     return render(request, 'workflow/bodenprobe_details.html',
                   {

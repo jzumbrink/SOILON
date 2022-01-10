@@ -97,12 +97,12 @@ class Bodenprobe(models.Model):
 
 
 class Address(models.Model):
-    zip_code = models.IntegerField(blank=True)
-    city = models.CharField(max_length=50, blank=True)
-    street = models.CharField(max_length=100, blank=True)
+    zip_code = models.IntegerField(blank=True, null=True)
+    city = models.CharField(max_length=50, blank=True, null=True)
+    street = models.CharField(max_length=100, blank=True, null=True)
     house_number = models.CharField(max_length=10, blank=True, null=True)
-    country = models.CharField(max_length=40, default="Deutschland")
-    address_suffix = models.CharField(max_length=100, blank=True)
+    country = models.CharField(max_length=40, default="Deutschland", null=True)
+    address_suffix = models.CharField(max_length=100, blank=True, null=True)
 
 
 class PpmValue(models.Model):

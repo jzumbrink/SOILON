@@ -25,14 +25,38 @@ Bodenprobe
             Ergebnisse hochgeladen: {% if bodenprobe.results_upload_time %}{{ bodenprobe.results_upload_time }}{% else %}noch nicht hochgeladen{% endif %}
         </div>
     </div>
-    <div class="col-12">
-        <div class="bodenprobe-subheading">
-            Status der Bodenprobe: {{ status }}. {% if status == 0 %}Der Auftrag ist neu{% elif status == 1 %}Bodenprobe liegt vor{% elif status == 2 %}Bodenprobe wird getrocknet{% elif status == 3 %}Bodenprobe wurde gemahlen{% elif status == 4 %}Bodenprobe ist ein Pressling{% elif status == 5 %}Das Ergenis der Analyse liegt vor{% elif status == 6 %}Dem Kunde wurde geantwortet. Die Bodenprobe gilt als abgeschlossen{% endif %}
-        </div>
+    <form enctype="multipart/form-data" method="post">
+    {% csrf_token %}
         <div>
-            {% include 'workflow/soil_sample_details/status_table.html' with status_list=status_list form=form %}
+            <div class="col-6">
+                <div class="bodenprobe-subheading">
+                    Status der Bodenprobe: {{ status }}. {% if status == 0 %}Der Auftrag ist neu{% elif status == 1 %}Bodenprobe liegt vor{% elif status == 2 %}Bodenprobe wird getrocknet{% elif status == 3 %}Bodenprobe wurde gemahlen{% elif status == 4 %}Bodenprobe ist ein Pressling{% elif status == 5 %}Das Ergenis der Analyse liegt vor{% elif status == 6 %}Dem Kunde wurde geantwortet. Die Bodenprobe gilt als abgeschlossen{% endif %}
+                </div>
+                <div>
+                    {% include 'workflow/soil_sample_details/status_table.html' with status_list=status_list form=form %}
+                </div>
+            </div>
+            <div class="col-6">
+                <div id="alt-address-fields">
+                    Alternative Adresse:
+                    <div class="">Strasse* / Hausnummer*</div>
+                    <span class="save-button-input">{{ form.alt_street }}</span><span class="small-form-housenumber save-button-input">{{ form.alt_house_number }}</span>
+                    <div class="">Adresszusatz</div>
+                    <div class="save-button-input">{{ form.alt_address_suffix }}</div>
+                    <div class="">Postleitzahl* / Ort*</div>
+                    <span class="small-form-zip-code save-button-input">{{ form.alt_zip_code }}</span><span class="save-button-input">{{ form.alt_city }}</span>
+                    <div class="">Land*</div>
+                    <div class="save-button-input">{{ form.alt_country }}</div>
+                </div>
+            </div>
         </div>
-    </div>
+        <div class="col-12">
+            <div class="form-submit-button form-alone-submit-button-wrapper" id="soil-sample-save-button-div">
+                <input class="form-alone-submit-button {% if form.is_billing_address_sampling_point %}soil-sample-save-button-half{% else %}soil-sample-save-button-full{% endif %}" id="soil-sample-save-button" type="submit" value="Speichern">
+            </div>
+        </div>
+
+    </form>
     <div class="col-12">
         <div class="bodenprobe-subheading">
             Ergebnisse:
@@ -62,4 +86,6 @@ Bodenprobe
         <a href="{% url 'kunde_details' kunde_id=kunde.id %}"><h2>{{ kunde.vorname }} {{ kunde.nachname }} ({{ kunde.id }})</h2></a>
         {% include 'workflow/steckbrief_kunde.html' %}
     </div>
+
+    <script src="{% static 'js/form_soil_sample_submit_button.js' %}"></script>
 {% endblock %}

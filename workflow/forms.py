@@ -92,6 +92,7 @@ class UpdateSoilSample(forms.Form):
     status_id = forms.IntegerField(
         min_value=0,
         max_value=6,
+        required=False
     )
 
     is_billing_address_sampling_point = forms.BooleanField(required=False)
