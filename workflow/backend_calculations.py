@@ -1,4 +1,5 @@
-from .models import Bodenprobe, Kunde
+from .models import Bodenprobe, Kunde, GeoCoordinate, NORTH, SOUTH, EAST, WEST
+from django.shortcuts import get_object_or_404
 
 
 def getPercentageKundendaten(kunde_id):
@@ -72,3 +73,17 @@ def getComparisionScore(search_string, db_obj, search_fields=[]):
         if len(value) > 0:
             score_ges.append(score / len(search_string))
     return max(score_ges)
+
+
+def convert_full_geo_to_std(full_geo_coordinate: str):
+
+
+
+def save_full_geo_coordinate(soil_sample_id: int, full_geo_coordinate: str):
+    soil_sample = get_object_or_404(Bodenprobe, pk=soil_sample_id)
+    std_geo_coordinate = convert_full_geo_to_std(full_geo_coordinate)
+    if soil_sample.geo_coordinate_id < 0:
+        # create new geo_coordinate
+        geo_coordinate = GeoCoordinate.objects.create(
+
+        )

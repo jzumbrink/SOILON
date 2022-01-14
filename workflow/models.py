@@ -90,6 +90,9 @@ class Bodenprobe(models.Model):
     is_billing_address_sampling_point = models.BooleanField(default=False)
     alt_sampling_point_address_id = models.IntegerField(blank=True, default=-1)
 
+    geo_coordinate_id = models.IntegerField(blank=True, default=-1)
+
+
     def __str__(self):
         if self.label_name is None or self.label_name == '':
             return "Bodenprobe (Nr. " + str(self.id) + ")"
@@ -111,6 +114,19 @@ class PpmValue(models.Model):
     bodenprobe_id = models.IntegerField()
 
 
+NORTH = "NORTH"
+SOUTH = "SOUTH"
+EAST = "EAST"
+WEST = "WEST"
+
+VERTICAL_SKY_DIRECTIONS = (
+    (NORTH, "N"),
+    SOUTH, "S"
+)
+HORIZONTAL_SKY_DIRECTIONS = (
+    (EAST, "E"),
+    WEST, "W"
+)
 
 
 class GeoCoordinate(models.Model):
@@ -119,9 +135,16 @@ class GeoCoordinate(models.Model):
     latitude_minutes = models.IntegerField()
     latitude_seconds = models.IntegerField()
     latitude_deciseconds = models.IntegerField()
-
+    vertical_sky_direction = models.CharField(
+        max_length=1,
+        choices=VERTICAL_SKY_DIRECTIONS
+    )
     # Längengrad
     longitude_degrees = models.IntegerField()
     longitude_minutes = models.IntegerField()
     longitude_seconds = models.IntegerField()
     longitude_deciseconds = models.IntegerField()
+    horizontal_sky_direction = models.CharField(
+        max_length=1,
+        choices=HORIZONTAL_SKY_DIRECTIONS
+    )

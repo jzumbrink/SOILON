@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404, Http404, HttpResponse
-from .models import Kunde, Bodenprobe, Auftrag, PpmValue, Address
+from .models import Auftrag, PpmValue, Address
 from .forms import *
 from SoilonWorkflowSolutions import settings as project_settings
 from .pdf_handling import handle_bodenprobe_auswertung
@@ -13,8 +13,6 @@ from .answer_pdf import create_answer_pdf
 from math import ceil
 import os
 import math
-
-from .templates_office.template3.root import create_doc
 
 
 def index(request):
@@ -251,19 +249,6 @@ def order_overview(request):
 @login_required
 def pdf_failed(request, error):
     return render(request, 'workflow/pdf_failed.html', {'error': error})
-
-
-''''@login_required
-def details_bodenprobeOld(request, messung_id):
-    bodenprobe = get_object_or_404(Bodenprobe, pk=messung_id)
-    return render(request, 'workflow/display-details-bodenprobe.html',
-                  {'messung_id': messung_id,
-                   'kunden_id': bodenprobe.kunden_id,
-                   'data_path': bodenprobe.raw_data_path,
-                   'filename': bodenprobe.raw_filename,
-                   'text': bodenprobe.mail_text,
-                   'info': bodenprobe.extra_info})
-'''
 
 
 @login_required
@@ -527,7 +512,7 @@ def bodenprobe_details(request, bodenprobe_id):
             # TODO update/create alternate address
             Bodenprobe.objects.filter(pk=bodenprobe_id).update(is_billing_address_sampling_point=form.cleaned_data['is_billing_address_sampling_point'])
             Bodenprobe.objects.filter(pk=bodenprobe_id).update(status=form.cleaned_data['status_id'])
-            Bodenprobe.objects.filter(pk=bodenprobe_id).update(status=form.cleaned_data['status_id'])
+            save_full_geo_coordinate(bodenprobe_id, form.cleaned_data['geographic_coordinates_full_field'])
             if not form.cleaned_data['is_billing_address_sampling_point']:
                 if bodenprobe.alt_sampling_point_address_id != -1:
                     # Adresse aktualisieren
