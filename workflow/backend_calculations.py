@@ -102,5 +102,7 @@ def save_full_geo_coordinate(soil_sample_id: int, full_geo_coordinate: str):
 
 def get_full_geo_coordinate(soil_sample_id: int):
     soil_sample = get_object_or_404(Bodenprobe, pk=soil_sample_id)
+    if soil_sample.geo_coordinate_id < 0:
+        return ''
     geo_coordinate = get_object_or_404(GeoCoordinate, pk=soil_sample.geo_coordinate_id)
     return convert_std_to_full_geo(geo_coordinate.latitude, geo_coordinate.longitude)
