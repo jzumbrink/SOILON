@@ -574,6 +574,7 @@ def bodenprobe_details(request, bodenprobe_id):
     initial_form_dict = {
                           'status_id': bodenprobe.status,
                           'is_billing_address_sampling_point': bodenprobe.is_billing_address_sampling_point,
+                          'geographic_coordinates_full_field': get_full_geo_coordinate(bodenprobe_id)
                       }
 
     if bodenprobe.alt_sampling_point_address_id >= 0:

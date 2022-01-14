@@ -1,4 +1,4 @@
-from .models import Bodenprobe, Kunde, GeoCoordinate, NORTH, SOUTH, EAST, WEST
+from .models import Bodenprobe, Kunde, GeoCoordinate
 from django.shortcuts import get_object_or_404
 
 
@@ -75,15 +75,32 @@ def getComparisionScore(search_string, db_obj, search_fields=[]):
     return max(score_ges)
 
 
-def convert_full_geo_to_std(full_geo_coordinate: str):
+def convert_std_to_full_geo(latitude: int, longitude: int):
+    return ', '.join([str(float(value)*10**(-12)) for value in [latitude, longitude]])
 
+
+def convert_full_geo_to_std(full_geo_coordinate: str):
+    return [int(float(coordinate.rstrip())*10**12) for coordinate in full_geo_coordinate.split(',')]
 
 
 def save_full_geo_coordinate(soil_sample_id: int, full_geo_coordinate: str):
     soil_sample = get_object_or_404(Bodenprobe, pk=soil_sample_id)
-    std_geo_coordinate = convert_full_geo_to_std(full_geo_coordinate)
+    latitude, longitude = convert_full_geo_to_std(full_geo_coordinate)
     if soil_sample.geo_coordinate_id < 0:
         # create new geo_coordinate
         geo_coordinate = GeoCoordinate.objects.create(
-
+            latitude=latitude,
+            longitude=longitude,
         )
+        Bodenprobe.objects.filter(pk=soil_sample_id).update(geo_coordinate_id=geo_coordinate.id)
+    else:
+        GeoCoordinate.objects.filter(pk=soil_sample.geo_coordinate_id).update(
+                                     latitude=latitude,
+                                     longitude=longitude
+                                     )
+
+
+def get_full_geo_coordinate(soil_sample_id: int):
+    soil_sample = get_object_or_404(Bodenprobe, pk=soil_sample_id)
+    geo_coordinate = get_object_or_404(GeoCoordinate, pk=soil_sample.geo_coordinate_id)
+    return convert_std_to_full_geo(geo_coordinate.latitude, geo_coordinate.longitude)

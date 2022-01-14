@@ -114,37 +114,9 @@ class PpmValue(models.Model):
     bodenprobe_id = models.IntegerField()
 
 
-NORTH = "NORTH"
-SOUTH = "SOUTH"
-EAST = "EAST"
-WEST = "WEST"
-
-VERTICAL_SKY_DIRECTIONS = (
-    (NORTH, "N"),
-    SOUTH, "S"
-)
-HORIZONTAL_SKY_DIRECTIONS = (
-    (EAST, "E"),
-    WEST, "W"
-)
-
-
 class GeoCoordinate(models.Model):
+    # Die Koordinaten werden mit 10^12 multipliziert und dann gespeichert
     # Breitengrad
-    latitude_degrees = models.IntegerField()
-    latitude_minutes = models.IntegerField()
-    latitude_seconds = models.IntegerField()
-    latitude_deciseconds = models.IntegerField()
-    vertical_sky_direction = models.CharField(
-        max_length=1,
-        choices=VERTICAL_SKY_DIRECTIONS
-    )
+    latitude = models.IntegerField()
     # Längengrad
-    longitude_degrees = models.IntegerField()
-    longitude_minutes = models.IntegerField()
-    longitude_seconds = models.IntegerField()
-    longitude_deciseconds = models.IntegerField()
-    horizontal_sky_direction = models.CharField(
-        max_length=1,
-        choices=HORIZONTAL_SKY_DIRECTIONS
-    )
+    longitude = models.IntegerField()
