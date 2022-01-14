@@ -1,0 +1,27 @@
+.input-card {
+    padding: 0px 10px 10px 10px;
+    margin: 15px 10px 10px 0px;
+    background-image: url("../img/verlauf1b.jpg");
+    background-size: 100% 100%;
+    border: 2px solid rgba(3,11,40,0.36);
+    display: inline-block;
+}
+
+.input-card-heading {
+    color: #fff;
+    text-align: left;
+}
+
+.input-card-input input{
+    text-align: left;
+    width: 196px;
+}
+
+.format-explanation {
+    color: #fff;
+    padding: 5px 0px 5px 0px;
+}
+
+.further-information-geo a{
+    color: #ddd;
+}

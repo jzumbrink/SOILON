@@ -18,6 +18,11 @@
     margin: 0;
 }
 
+.form-input, .form-attribut {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 .form-attribut {
     text-align: center;
     font-weight: bold;
@@ -59,11 +64,6 @@
 
 .form-alone-submit-button-wrapper {
     transition: width 1.2s ease-in-out, margin-left 1.2s ease-in-out;
-}
-
-.form-input, .form-attribut {
-    margin-top: 10px;
-    margin-bottom: 10px;
 }
 
 .form-head {

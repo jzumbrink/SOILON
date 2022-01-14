@@ -109,3 +109,19 @@ class PpmValue(models.Model):
     element = models.CharField(max_length=2)
     value = models.FloatField()
     bodenprobe_id = models.IntegerField()
+
+
+
+
+class GeoCoordinate(models.Model):
+    # Breitengrad
+    latitude_degrees = models.IntegerField()
+    latitude_minutes = models.IntegerField()
+    latitude_seconds = models.IntegerField()
+    latitude_deciseconds = models.IntegerField()
+
+    # Längengrad
+    longitude_degrees = models.IntegerField()
+    longitude_minutes = models.IntegerField()
+    longitude_seconds = models.IntegerField()
+    longitude_deciseconds = models.IntegerField()

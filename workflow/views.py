@@ -5,7 +5,7 @@ from SoilonWorkflowSolutions import settings as project_settings
 from .pdf_handling import handle_bodenprobe_auswertung
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.urls import reverse
 from .backend_calculations import *
 from .config import *
@@ -267,8 +267,17 @@ def details_bodenprobeOld(request, messung_id):
 
 
 @login_required
-def workflow_guide(request):
-    return render(request, 'workflow/informationen_workflow.html')
+def redirect_std_guide(request):
+    return workflow_guide(request, 'workflow')
+
+
+@login_required
+def workflow_guide(request, guide_name):
+    if guide_name == "workflow":
+        return render(request, 'workflow/informationen_workflow.html')
+    elif guide_name == "geo":
+        return render(request, 'workflow/informations_geo.html')
+    return HttpResponseNotFound("Not found")
 
 
 @login_required
@@ -517,6 +526,7 @@ def bodenprobe_details(request, bodenprobe_id):
         if form.is_valid():
             # TODO update/create alternate address
             Bodenprobe.objects.filter(pk=bodenprobe_id).update(is_billing_address_sampling_point=form.cleaned_data['is_billing_address_sampling_point'])
+            Bodenprobe.objects.filter(pk=bodenprobe_id).update(status=form.cleaned_data['status_id'])
             Bodenprobe.objects.filter(pk=bodenprobe_id).update(status=form.cleaned_data['status_id'])
             if not form.cleaned_data['is_billing_address_sampling_point']:
                 if bodenprobe.alt_sampling_point_address_id != -1:

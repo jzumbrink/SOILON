@@ -104,3 +104,5 @@ class UpdateSoilSample(forms.Form):
     alt_country = forms.CharField(max_length=40, initial="Deutschland", required=False)
     alt_address_suffix = forms.CharField(max_length=100, required=False)
 
+    geographic_coordinates_full_field = forms.CharField(required=False)
+

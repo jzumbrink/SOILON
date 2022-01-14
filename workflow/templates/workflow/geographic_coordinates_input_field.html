@@ -1,0 +1,21 @@
+<!--
+gets:
+form: UpdateSoilSample
+
+required css import:
+<link rel="stylesheet" href="{\% static 'css/geographic_coordinates_input.css' %}">
+-->
+<div class="input-card">
+    <div class="form-attribut input-card-heading">
+        Geographische Koordinaten
+    </div>
+    <div class=" input-card-input save-button-input">
+        {{ form.geographic_coordinates_full_field }}
+    </div>
+    <div class="format-explanation">
+        Beispiel: 51°22'28.5"N 6°45'01.2"E
+    </div>
+    <div class="further-information-geo">
+        <a href="{% url 'w_guide' guide_name='geo' %}">Weitere Informationen</a>
+    </div>
+</div>

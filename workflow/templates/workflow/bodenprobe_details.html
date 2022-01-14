@@ -9,6 +9,7 @@ Bodenprobe
 <link rel="stylesheet" href="{% static 'css/auftrags_uebersicht.css' %}">
 <link rel="stylesheet" href="{% static 'css/bodenprobe_status.css' %}">
 <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+<link rel="stylesheet" href="{% static 'css/geographic_coordinates_input.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -33,7 +34,13 @@ Bodenprobe
                     Status der Bodenprobe: {{ status }}. {% if status == 0 %}Der Auftrag ist neu{% elif status == 1 %}Bodenprobe liegt vor{% elif status == 2 %}Bodenprobe wird getrocknet{% elif status == 3 %}Bodenprobe wurde gemahlen{% elif status == 4 %}Bodenprobe ist ein Pressling{% elif status == 5 %}Das Ergenis der Analyse liegt vor{% elif status == 6 %}Dem Kunde wurde geantwortet. Die Bodenprobe gilt als abgeschlossen{% endif %}
                 </div>
                 <div>
-                    {% include 'workflow/soil_sample_details/status_table.html' with status_list=status_list form=form %}
+                    {% include 'workflow/soil_sample_details/status_table.html' with status_list=status_list%}
+                </div>
+                <div class="save-button-input">
+                    Neuer Status: {{ form.status_id }}
+                </div>
+                <div>
+                    {% include 'workflow/geographic_coordinates_input_field.html' with form=form %}
                 </div>
             </div>
             <div class="col-6">
@@ -47,6 +54,9 @@ Bodenprobe
                     <span class="small-form-zip-code save-button-input">{{ form.alt_zip_code }}</span><span class="save-button-input">{{ form.alt_city }}</span>
                     <div class="">Land*</div>
                     <div class="save-button-input">{{ form.alt_country }}</div>
+                </div>
+                <div class="save-button-input" id="alt-address-input">
+                    {{ form.is_billing_address_sampling_point }}<b>Rechnungsadresse stimmt mit Stelle der Probenentnahme überein</b><br>
                 </div>
             </div>
         </div>

@@ -11,7 +11,8 @@ urlpatterns = [
     path('pdf-upload', views.upload_soil_sample_result, name="pdf_upload"),
     path('order-overview/', views.order_overview, name="order_overview"),
     path('search-database/', views.search_database, name="search_database"),
-    path('guide/', views.workflow_guide, name="w_guide"),
+    path('guide/<str:guide_name>', views.workflow_guide, name="w_guide"),
+    path('guide/', views.redirect_std_guide, name="w_guide_std"),
     path('analytics/', views.analytics, name="analytics"),
 
     path('order/<int:order_id>', views.order_details, name="order_details"),
