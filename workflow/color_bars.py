@@ -117,3 +117,9 @@ def createImg(filename, element, ppm_value):
 
     image.save(filename)
 
+
+def create_dummy_img(filename):
+    dummy_data = numpy.zeros((25, 1024, 3), dtype=numpy.uint8)
+    image = Image.fromarray(dummy_data)
+    image.save(filename)
+

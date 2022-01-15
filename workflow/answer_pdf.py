@@ -3,7 +3,7 @@ from datetime import date
 from docxtpl import DocxTemplate, InlineImage
 from docx.shared import Mm
 from .models import Kunde, Auftrag, Bodenprobe, PpmValue
-from .color_bars import createImg
+from .color_bars import createImg, create_dummy_img
 from SoilonWorkflowSolutions import settings as project_settings
 from .config import microsoft_word_installed, used_elements
 from docx2pdf import convert
@@ -77,7 +77,10 @@ def create_answer_pdf(soil_sample_id, filename):
     img_filenames = {}
     for element in used_elements:
         img_filenames[element] = os.path.join(img_temp_folder, 'img_{0}_{1}.png'.format(soil_sample_id, element))
-        createImg(img_filenames[element], element, getPpmValue(element, soil_sample_id))
+        if PpmValue.objects.filter(element=element, bodenprobe_id=soil_sample_id).__len__() > 0:
+            createImg(img_filenames[element], element, getPpmValue(element, soil_sample_id))
+        else:
+            create_dummy_img(img_filenames[element])
 
     context = {
         'title': customer.titel + ' ' if len(customer.titel) > 0 else '',
