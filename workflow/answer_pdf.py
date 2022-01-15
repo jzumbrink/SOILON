@@ -8,7 +8,7 @@ from SoilonWorkflowSolutions import settings as project_settings
 from .config import microsoft_word_installed, used_elements
 from docx2pdf import convert
 
-template_filename = 'tpl_4.docx'
+template_filename = 'tpl_5.docx'
 
 month_map = {
     1: "Januar",
