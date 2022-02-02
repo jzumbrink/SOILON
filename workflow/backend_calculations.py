@@ -85,19 +85,25 @@ def convert_full_geo_to_std(full_geo_coordinate: str):
 
 def save_full_geo_coordinate(soil_sample_id: int, full_geo_coordinate: str):
     soil_sample = get_object_or_404(Bodenprobe, pk=soil_sample_id)
-    latitude, longitude = convert_full_geo_to_std(full_geo_coordinate)
-    if soil_sample.geo_coordinate_id < 0:
-        # create new geo_coordinate
-        geo_coordinate = GeoCoordinate.objects.create(
-            latitude=latitude,
-            longitude=longitude,
-        )
-        Bodenprobe.objects.filter(pk=soil_sample_id).update(geo_coordinate_id=geo_coordinate.id)
+    if len(full_geo_coordinate) > 0:
+        latitude, longitude = convert_full_geo_to_std(full_geo_coordinate)
+
+        if soil_sample.geo_coordinate_id < 0:
+            # create new geo_coordinate
+            geo_coordinate = GeoCoordinate.objects.create(
+                latitude=latitude,
+                longitude=longitude,
+            )
+            Bodenprobe.objects.filter(pk=soil_sample_id).update(geo_coordinate_id=geo_coordinate.id)
+        else:
+            GeoCoordinate.objects.filter(pk=soil_sample.geo_coordinate_id).update(
+                latitude=latitude,
+                longitude=longitude
+            )
     else:
-        GeoCoordinate.objects.filter(pk=soil_sample.geo_coordinate_id).update(
-                                     latitude=latitude,
-                                     longitude=longitude
-                                     )
+        # Delete Coordinate
+        GeoCoordinate.objects.filter(pk=soil_sample.geo_coordinate_id).delete()
+        Bodenprobe.objects.filter(pk=soil_sample_id).update(geo_coordinate_id=-1)
 
 
 def get_full_geo_coordinate(soil_sample_id: int):
