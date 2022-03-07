@@ -626,7 +626,7 @@ def further_functions(request):
 
 @login_required
 def download_soil_sample_json(request):
-    path = os.path.join(project_settings.MEDIA_ROOT, 'media', 'soilSamplesData.json')
+    path = os.path.join(project_settings.MEDIA_ROOT, 'internData', 'soilSamplesData.json')
     if generate_data_soil_samples_json_file(path):
         with open(path, 'rb') as file:
             return HttpResponse(file.read(), content_type='application/force-download')

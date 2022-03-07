@@ -2,7 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from .models import Bodenprobe, PpmValue, Auftrag, Kunde
 
 
-def get_ppm_value(element, soil_sample_id):
+def get_ppm_value(element, soil_sample_id, int_std=False):
     try:
         return PpmValue.objects.filter(
             bodenprobe_id=soil_sample_id,
@@ -10,7 +10,7 @@ def get_ppm_value(element, soil_sample_id):
         )[0].value
     except IndexError:
         # no data available so far
-        return '/'
+        return -1 if int_std else '/'
 
 
 def get_customer_id(soil_sample: Bodenprobe) -> int:
