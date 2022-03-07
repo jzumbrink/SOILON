@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404, Http404, HttpResponse
+from django.template.context_processors import request
+
 from .models import Auftrag, PpmValue, Address
 from .forms import *
 from SoilonWorkflowSolutions import settings as project_settings
@@ -10,6 +12,8 @@ from django.urls import reverse
 from .backend_calculations import *
 from .config import *
 from .answer_pdf import create_answer_pdf
+from .json_generator import generate_data_soil_samples_json_file
+from .database_operations import get_ppm_value
 from math import ceil
 import os
 import math
@@ -415,17 +419,6 @@ def raise_error(request):
         })
 
 
-def getPpmValue(element, bodenprobe_id):
-    try:
-        return PpmValue.objects.filter(
-            bodenprobe_id=bodenprobe_id,
-            element=element
-        )[0].value
-    except IndexError:
-        # Keine Daten vorhanden bisher
-        return '/'
-
-
 def createAuftragDict(auftrags_id):
     auftrag = get_object_or_404(Auftrag, pk=auftrags_id)
     kunde = get_object_or_404(Kunde, pk=auftrag.kunden_id)
@@ -434,13 +427,13 @@ def createAuftragDict(auftrags_id):
         'id': bodenprobe.id,
         'label_name': bodenprobe.label_name,
         'extra_info': bodenprobe.extra_info,
-        'cd': getPpmValue('cd', bodenprobe.id),
-        'pb': getPpmValue('pb', bodenprobe.id),
-        'cu': getPpmValue('cu', bodenprobe.id),
-        'zn': getPpmValue('zn', bodenprobe.id),
-        'cr': getPpmValue('cr', bodenprobe.id),
-        'ni': getPpmValue('ni', bodenprobe.id),
-        'as': getPpmValue('as', bodenprobe.id),
+        'cd': get_ppm_value('cd', bodenprobe.id),
+        'pb': get_ppm_value('pb', bodenprobe.id),
+        'cu': get_ppm_value('cu', bodenprobe.id),
+        'zn': get_ppm_value('zn', bodenprobe.id),
+        'cr': get_ppm_value('cr', bodenprobe.id),
+        'ni': get_ppm_value('ni', bodenprobe.id),
+        'as': get_ppm_value('as', bodenprobe.id),
     } for bodenprobe in Bodenprobe.objects.filter(auftrags_id=auftrags_id)]
     form = UpdateAuftrag()
     return {'auftrags_id': auftrags_id,
@@ -560,13 +553,13 @@ def bodenprobe_details(request, bodenprobe_id):
         'id': bodenprobe.id,
         'label_name': bodenprobe.label_name,
         'extra_info': bodenprobe.extra_info,
-        'cd': getPpmValue('cd', bodenprobe.id),
-        'pb': getPpmValue('pb', bodenprobe.id),
-        'cu': getPpmValue('cu', bodenprobe.id),
-        'zn': getPpmValue('zn', bodenprobe.id),
-        'cr': getPpmValue('cr', bodenprobe.id),
-        'ni': getPpmValue('ni', bodenprobe.id),
-        'as': getPpmValue('as', bodenprobe.id),
+        'cd': get_ppm_value('cd', bodenprobe.id),
+        'pb': get_ppm_value('pb', bodenprobe.id),
+        'cu': get_ppm_value('cu', bodenprobe.id),
+        'zn': get_ppm_value('zn', bodenprobe.id),
+        'cr': get_ppm_value('cr', bodenprobe.id),
+        'ni': get_ppm_value('ni', bodenprobe.id),
+        'as': get_ppm_value('as', bodenprobe.id),
     }, ]
 
     answer_filename = 'Auswertung-{0}-{1}-{2}.{3}'.format(kunde.vorname, kunde.nachname, bodenprobe.id,
@@ -600,7 +593,7 @@ def bodenprobe_details(request, bodenprobe_id):
 
 
 @login_required
-def generate_pdf_answer_customer_file(request, bodenprobe_id, filename):
+def generate_pdf_answer_customer_file(bodenprobe_id, filename):
     create_answer_pdf(bodenprobe_id, filename)
 
 
@@ -618,15 +611,24 @@ def download_file(request, inner_folder, filename):
     if inner_folder == 'ana_answer' and Bodenprobe.objects.filter(
             pk=get_soil_sample_id_from_filename(filename)).count() == 1:
         # Pdf als Antwort für den Kunden generieren
-        generate_pdf_answer_customer_file(request, get_soil_sample_id_from_filename(filename), filename)
+        generate_pdf_answer_customer_file(get_soil_sample_id_from_filename(filename), filename)
     if os.path.exists(path):
         # Ein Pdf-Dokument als Antwort für den Kunden soll heruntergeladen werden
         with open(path, 'rb') as file:
-            response = HttpResponse(file.read(), content_type='application/force-download')
-            return response
+            return HttpResponse(file.read(), content_type='application/force-download')
     raise Http404
 
 
 @login_required
-def analytics(request):
-    return render(request, 'workflow/analytics.html')
+def further_functions(request):
+    return render(request, 'workflow/further_functions.html')
+
+
+@login_required
+def download_soil_sample_json(request):
+    path = os.path.join(project_settings.MEDIA_ROOT, 'media', 'soilSamplesData.json')
+    if generate_data_soil_samples_json_file(path):
+        with open(path, 'rb') as file:
+            return HttpResponse(file.read(), content_type='application/force-download')
+    else:
+        raise Http404

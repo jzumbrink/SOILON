@@ -1,0 +1,11 @@
+{% extends 'workflow/basic_struct.html' %}
+{% load static %}
+
+{% block title %}
+Weitere Funktionen | Soilon Workflow
+{% endblock %}
+
+{% block content %}
+    <h1>Datenbank</h1>
+    <a href="{% url 'download_soil_sample_json' %}">JSON-Datei mit den Inhalten aller Bodenproben runterladen</a>
+{% endblock %}
