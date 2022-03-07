@@ -6,7 +6,7 @@ import json
 
 def get_geo_coordinates(soil_sample: Bodenprobe) -> tuple:
     if soil_sample.geo_coordinate_id == -1:
-        return '', ''
+        return None, None
     geo_obj: GeoCoordinate = GeoCoordinate.objects.get(id=soil_sample.geo_coordinate_id)
     return map(float, convert_std_to_full_geo(geo_obj.latitude, geo_obj.longitude).split(','))
 
