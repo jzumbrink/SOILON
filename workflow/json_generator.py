@@ -29,6 +29,7 @@ def generate_data_soil_samples_json_file(path):
             'as': get_ppm_value('as', soil_sample.id, int_std=True),
             'latitude': latitude,
             'longitude': longitude,
+            'fromDuSouth': soil_sample.from_duisburg_south,
         })
     with open(path, 'w+') as file:
         json.dump(data, file, indent=4)
