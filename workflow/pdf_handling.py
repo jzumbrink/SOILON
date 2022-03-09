@@ -7,7 +7,7 @@ from .config import relevant_elements
 from .models import Kunde, PpmValue
 
 
-def create_CSV_from_PDF(pdf_filename, csv_filename):
+def create_csv_from_pdf(pdf_filename: str, csv_filename: str):
     tabula.convert_into(pdf_filename,
                         csv_filename,
                         output_format='csv',
@@ -15,7 +15,7 @@ def create_CSV_from_PDF(pdf_filename, csv_filename):
                         )
 
 
-def create_excel_from_CSV(csv_filename, excel_filename):
+def create_excel_from_csv(csv_filename: str, excel_filename: str):
     c = pandas.read_csv(csv_filename, encoding='ISO-8859-1')
     c.to_excel(excel_filename,
                index=None,
@@ -25,7 +25,7 @@ def create_excel_from_CSV(csv_filename, excel_filename):
                )
 
 
-def get_dict_from_CSV(csv_filename):
+def get_dict_from_csv(csv_filename: str) -> dict:
     data = {}
     with open(csv_filename) as c:
         for line in csv.reader(c):
@@ -35,19 +35,19 @@ def get_dict_from_CSV(csv_filename):
     return data
 
 
-def createCustomerTextFromBlueprint(blueprint_text, bodenprobe_daten, kundendaten):
+def create_customer_text_from_blueprint(blueprint_text: str, soil_sample_data, customer_data) -> str:
     new_text = blueprint_text.format(
-        kundendaten["anrede"],
-        kundendaten["nachname"],
-        bodenprobe_daten["Pb"][3],
-        bodenprobe_daten["As"][3],
-        bodenprobe_daten["Zn"][3],
-        bodenprobe_daten["Cu"][3],
+        customer_data["anrede"],
+        customer_data["nachname"],
+        soil_sample_data["Pb"][3],
+        soil_sample_data["As"][3],
+        soil_sample_data["Zn"][3],
+        soil_sample_data["Cu"][3],
     )
     return new_text
 
 
-def create_float_from_string(old_string):
+def create_float_from_string(old_string: str) -> float:
     new_string = ""
     for char in old_string:
         if char == ",":
@@ -60,49 +60,46 @@ def create_float_from_string(old_string):
     return round(float(new_string) * 10000, 1)
 
 
-def handle_bodenprobe_auswertung(pdf_file, kunden_id, auftrags_id, messung_id):
-    # Kundendaten bekommen
-    kundendaten = Kunde.objects.filter(pk=kunden_id).values('anrede', 'vorname', 'nachname')[0]
-    # das richtige Verzeichnis erstellen falls noch nicht vorhanden
+def handle_soil_sample_evaluation(pdf_file, customer_id: int, order_id: int, soil_sample_id: int):
+    customer_data: dict = Kunde.objects.filter(pk=customer_id).values('anrede', 'vorname', 'nachname')[0]
+    # create the correct folder if not yet existent
     try:
-        os.mkdir("data/kunden-bodenproben-pdf/{0}".format(messung_id))
+        os.mkdir("data/kunden-bodenproben-pdf/{0}".format(soil_sample_id))
     except FileExistsError:
-        # das Verzeichnis wurde schon erstellt
+        # the folder already exists
         pass
         # Error, da die ID nicht eindeutig wäre bzw. nach Anweisung fragen
 
-    # kundendaten = {"Anrede": x, "Vorname": y, "Nachname":z}
-    raw_data_path = 'data/kunden-bodenproben-pdf/{0}/'.format(messung_id)
-    raw_filename = 'BPR-{0}-K{1}.A{2}.B{3}.'.format(datetime.datetime.now().strftime("%d.%m.%Y-%H.%M"), kunden_id,
-                                                    auftrags_id, messung_id)
-    filename = raw_data_path + raw_filename
+    # customer_data = {"Anrede": x, "Vorname": y, "Nachname":z}
+    raw_data_path: str = 'data/kunden-bodenproben-pdf/{0}/'.format(soil_sample_id)
+    raw_filename: str = 'BPR-{0}-K{1}.A{2}.B{3}.'.format(datetime.datetime.now().strftime("%d.%m.%Y-%H.%M"), customer_id,
+                                                    order_id, soil_sample_id)
+    filename: str = raw_data_path + raw_filename
     with open(filename + "pdf", 'wb+') as file2:
         for c in pdf_file.chunks():
             file2.write(c)
 
-    create_CSV_from_PDF(filename + 'pdf', filename + 'csv')
-    create_excel_from_CSV(filename + 'csv', filename + 'xlsx')
-    data = get_dict_from_CSV(filename + 'csv')
-    print(data)
-    # Für die Elemente die Daten als ppm-Value speichern (*10,000)
+    create_csv_from_pdf(filename + 'pdf', filename + 'csv')
+    create_excel_from_csv(filename + 'csv', filename + 'xlsx')
+    data = get_dict_from_csv(filename + 'csv')
+    # save the data as ppm-value (multiply by 10,000)
     for element_name in relevant_elements:
         ppm_value = create_float_from_string(data[element_name][3])
-        if len(PpmValue.objects.filter(bodenprobe_id=messung_id, element=element_name.lower())) == 0:
-            # Falls es für die Bodenprobe noch keine PPmValue objects gibt, dann werden sie erstellt
+        if len(PpmValue.objects.filter(bodenprobe_id=soil_sample_id, element=element_name.lower())) == 0:
+            # if there are not any PpmValue object for the soil sample, then they will be created
             PpmValue.objects.create(
-                bodenprobe_id=messung_id,
+                bodenprobe_id=soil_sample_id,
                 element=element_name.lower(),
                 value=ppm_value,
             )
         else:
-            # Ansonsten werden die PpmValue geupdated
-            PpmValue.objects.filter(bodenprobe_id=messung_id, element=element_name.lower()).update(value=ppm_value)
+            # otherwise the PpmValue object will be updated
+            PpmValue.objects.filter(bodenprobe_id=soil_sample_id, element=element_name.lower()).update(value=ppm_value)
 
     kundentext = open("etc/txt_t/kundennachricht_auswertung_t.txt", encoding="utf-8", mode="r").read()
-    new_text = createCustomerTextFromBlueprint(kundentext, data, kundendaten)
-    print(new_text)
+    new_text = create_customer_text_from_blueprint(kundentext, data, customer_data)
 
-    # die csv-Datei löschen
+    # remove the csv file, because it is no longer needed
     os.remove(filename + "csv")
 
     return new_text, raw_data_path, raw_filename

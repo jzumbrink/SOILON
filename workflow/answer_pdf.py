@@ -9,9 +9,9 @@ from SoilonWorkflowSolutions import settings as project_settings
 from .config import microsoft_word_installed, used_elements
 from docx2pdf import convert
 
-template_filename = 'tpl_5.docx'
+template_filename: str = 'tpl_5.docx'
 
-month_map = {
+month_map: dict = {
     1: "Januar",
     2: "Februar",
     3: "März",
@@ -27,7 +27,7 @@ month_map = {
 }
 
 
-def create_answer_pdf(soil_sample_id, filename):
+def create_answer_pdf(soil_sample_id: int, filename: str):
     filename = '.'.join(filename.split('.')[:-1])
     filename_docx = filename + '.docx'
     print(os.path.abspath(__file__))

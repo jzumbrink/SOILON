@@ -45,7 +45,7 @@
         </thead>
         {% for soil_sample in soil_sample_list %}
             <tr class="auftrags-daten-reihe">
-                <td><a href="{% url 'bodenprobe_details' bodenprobe_id=soil_sample.id %}">{{ soil_sample.id }}</a></td>
+                <td><a href="{% url 'bodenprobe_details' soil_sample_id=soil_sample.id %}">{{ soil_sample.id }}</a></td>
                 <td>{% if soil_sample.label_name %}Bodenprobe{% else %}{{ soil_sample.label_name }}{% endif %}</td>
                 <td>{{ soil_sample.cd }} ppm</td>
                 <td>{{ soil_sample.pb }} ppm</td>

@@ -2,6 +2,8 @@ from PIL import Image, ImageDraw, ImageFont
 import numpy
 import os
 
+# TODO refactor this whole file
+
 def farbbalken(border_list, ppm_value):
     global data
     grüngrenze = border_list[0]

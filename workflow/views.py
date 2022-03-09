@@ -1,10 +1,9 @@
-from django.shortcuts import render, redirect, get_object_or_404, Http404, HttpResponse
-from django.template.context_processors import request
+from django.shortcuts import render, redirect, Http404, HttpResponse
 
-from .models import Auftrag, PpmValue, Address
+from .models import Auftrag, Address
 from .forms import *
 from SoilonWorkflowSolutions import settings as project_settings
-from .pdf_handling import handle_bodenprobe_auswertung
+from .pdf_handling import handle_soil_sample_evaluation
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.http import HttpResponseRedirect, HttpResponseNotFound
@@ -27,7 +26,7 @@ def index(request):
 
 @login_required
 def welcome_screen(request):
-    return_dict = getKundenListe(request)
+    return_dict = get_customer_list(request)
     return_dict['user'] = request.user
     return_dict['url'] = 'main'
     return render(request, 'workflow/main.html', return_dict)
@@ -39,9 +38,9 @@ def new_customer(request):
         form = NewCustomer(request.POST)
         if form.is_valid():
             try:
-                geschlecht = form.cleaned_data['geschlecht'][0]
+                gender = form.cleaned_data['geschlecht'][0]
             except IndexError:
-                geschlecht = ''
+                gender = ''
             k = Kunde.objects.create(
                 nachname=form.cleaned_data['nachname'],
                 vorname=form.cleaned_data['vorname'],
@@ -54,11 +53,9 @@ def new_customer(request):
                 telefonnummer=form.cleaned_data['telefonnummer'],
                 email=form.cleaned_data['email'],
                 registrierungs_zeit=timezone.now(),
-                geschlecht=geschlecht,
+                geschlecht=gender,
                 titel=form.cleaned_data['titel'],
             )
-            print(reverse(add_customer_successful))
-            url = reverse(add_customer_successful) + "?kunden_id={}".format(str(k.id))
             return HttpResponseRedirect(reverse(kunde_details_success_msg, kwargs={'kunde_id': k.id, 'success': 1}))
     form = NewCustomer()
     return render(request, 'workflow/neuen_kunde_anlegen.html', {
@@ -66,21 +63,21 @@ def new_customer(request):
     })
 
 
-def getKundenListe(request):
+def get_customer_list(request):
     # Customer Pages fangen mit 1 an. Einfach weil es deshalb einfacher ist 'zureck_url' für die erste Seite anzugeben
-    kunden_liste = Kunde.objects.all().order_by('-registrierungs_zeit')
-    anzahl_kunden = len(kunden_liste)
+    customer_list = Kunde.objects.all().order_by('-registrierungs_zeit')
+    count_customer = len(customer_list)
     if 'page_customers' in request.GET.keys():
-        # Es wird angegeben, welche Kunden angezeigt werden sollen
+        # page_customers decides which customer to display
         page_customers = int(request.GET.get('page_customers')) - 1
-        kunden_liste = kunden_liste[page_customers * customers_per_site:min(anzahl_kunden,
+        customer_list = customer_list[page_customers * customers_per_site:min(count_customer,
                                                                             page_customers * customers_per_site + customers_per_site)]
     else:
-        kunden_liste = kunden_liste[0:customers_per_site]
+        customer_list = customer_list[0:customers_per_site]
         page_customers = 0
-    return_dict = {'kunden': kunden_liste,
+    return_dict = {'kunden': customer_list,
                    'aktuelle_seite': page_customers + 1,
-                   'seiten_ges': ceil(anzahl_kunden / customers_per_site),
+                   'seiten_ges': ceil(count_customer / customers_per_site),
                    }
     if page_customers > 0:  # Es kann eine Seite zurück gegangen werden
         # return_dict['zurueck_url'] = reverse('main')[:] + '?page_customers=' + str(page_customers - 1)
@@ -94,7 +91,7 @@ def getKundenListe(request):
 
 
 @login_required
-def http_error(request, error_title=None, error_details="Es ist ein Fehler aufgetreten"):
+def http_error(request, error_title: str=None, error_details: str="Es ist ein Fehler aufgetreten"):
     if error_title is not None:
         # Fehlermeldung mit Titel und Content
         return HttpResponseRedirect(
@@ -181,7 +178,7 @@ def upload_soil_sample_result(request):
                 # die Kunden id ermittel u.a. für den Antworttext
                 kunden_id = Kunde.objects.get(pk=a.kunden_id).id
 
-                generated_txt = handle_bodenprobe_auswertung(form.cleaned_data['pdf_bodenprobe_file'],
+                generated_txt = handle_soil_sample_evaluation(form.cleaned_data['pdf_bodenprobe_file'],
                                                              kunden_id,
                                                              b.auftrags_id,
                                                              b.id,
@@ -194,7 +191,7 @@ def upload_soil_sample_result(request):
                                                           )
                 # Zu der Bodenprobe leiten
                 return HttpResponseRedirect(reverse(bodenprobe_details, kwargs={
-                    'bodenprobe_id': b.id}) + "?msg=Die Daten wurden erfolgreich hochgeladen!")
+                    'soil_sample_id': b.id}) + "?msg=Die Daten wurden erfolgreich hochgeladen!")
             else:
                 return HttpResponseRedirect(reverse(raise_error) + "?error_details=Das Formular ist nicht gültig")
 
@@ -207,7 +204,7 @@ def upload_soil_sample_result(request):
 
 
 @login_required
-def pdf_succeed(request, m_id):
+def pdf_succeed(request, m_id: int):
     kunden_text = Bodenprobe.objects.filter(pk=m_id).values('mail_text')
     print(kunden_text)
     return render(request, 'workflow/pdf_succeed.html', {'kunden_text': kunden_text[0]['mail_text']})
@@ -215,15 +212,6 @@ def pdf_succeed(request, m_id):
 
 @login_required
 def order_overview(request):
-    """bodenproben = Bodenprobe.objects.order_by('id').values('id', 'kunden_id', 'raw_filename')
-    for i in range(len(bodenproben)):
-        kunden_daten = Kunde.objects.filter(pk=bodenproben[i]['kunden_id']).values('nachname', 'vorname')
-        print(kunden_daten)
-        try:
-            bodenproben[i]['kunden_id'] = "{0}, {1}".format(kunden_daten[0]['nachname'], kunden_daten[0]['vorname'])
-        except IndexError:
-            bodenproben[i]['kunden_id'] = "Undef kunden_id"
-    print(bodenproben)"""
     auftraege = []
     for auftrag in Auftrag.objects.all().order_by('-eingangs_zeit'):
         try:
@@ -240,7 +228,7 @@ def order_overview(request):
             'prg_probe_getrocknet': getPercentageAuftragBodenproben(auftrag.id, [2, 3, 4, 5]),
             'prg_ergebnisse_weiter': auftrag.ergebnisse_zurueckgemeldet,
             'prg_probe_analysiert': getPercentageAuftragBodenproben(auftrag.id, [4, 5]),
-            'prg_kundendaten': getPercentageKundendaten(auftrag.kunden_id),
+            'prg_kundendaten': get_percentage_customer_data(auftrag.kunden_id),
         }
         if auftrag.bereits_gezahlt:
             a['bool_bezahlt'] = True
@@ -251,7 +239,7 @@ def order_overview(request):
 
 
 @login_required
-def pdf_failed(request, error):
+def pdf_failed(request, error: str):
     return render(request, 'workflow/pdf_failed.html', {'error': error})
 
 
@@ -261,7 +249,7 @@ def redirect_std_guide(request):
 
 
 @login_required
-def workflow_guide(request, guide_name):
+def workflow_guide(request, guide_name: str):
     if guide_name == "workflow":
         return render(request, 'workflow/informationen_workflow.html')
     elif guide_name == "geo":
@@ -300,7 +288,7 @@ def new_order(request):
                                                                                  "Das Formular ist ungültig"))
 
     form = NewOrder()
-    return_dict = getKundenListe(request)
+    return_dict = get_customer_list(request)
     return_dict['form'] = form
     return_dict['url'] = 'new_order'
     return render(request, 'workflow/new_order.html', return_dict)
@@ -334,7 +322,7 @@ def search_database(request):
         search_string = request.GET.get("search")
         objekt_score_liste = []
         for objekt in alle_objekte:
-            score = getComparisionScore(search_string, objekt, suchkriterien[db_class])
+            score = get_comparision_score(search_string, objekt, suchkriterien[db_class])
             objekt_score_liste.append({'score': score, 'obj': objekt})
 
         obj_daten = [{'data': [obj['obj'].__dict__[kriterium] for kriterium in suchergebniss_spalten[db_class]],
@@ -386,7 +374,7 @@ def search_database(request):
 def add_customer_successful(request):
     try:
         kunden_daten = Kunde.objects.filter(pk=request.GET.get('kunden_id'))[0]
-        return render(request, 'workflow/kunde_anlegen_erfolgreich.html', {
+        return render(request, 'workflow/add_customer_successful.html', {
             'kunden_daten': kunden_daten
         })
     except IndexError:
@@ -419,7 +407,7 @@ def raise_error(request):
         })
 
 
-def createAuftragDict(auftrags_id):
+def create_order_dict(auftrags_id: int):
     auftrag = get_object_or_404(Auftrag, pk=auftrags_id)
     kunde = get_object_or_404(Kunde, pk=auftrag.kunden_id)
     # Hinzu kommt eine Tabelle mit allen Bodenproben
@@ -445,7 +433,7 @@ def createAuftragDict(auftrags_id):
 
 
 @login_required
-def order_details(request, order_id):
+def order_details(request, order_id: int):
     if request.method == 'POST':
         form = UpdateAuftrag(request.POST)
         if form.is_valid():
@@ -454,11 +442,11 @@ def order_details(request, order_id):
             Auftrag.objects.filter(pk=order_id).update(bereits_gezahlt=form.cleaned_data['bereits_gezahlt'])
             return HttpResponseRedirect(
                 reverse(auftrag_details_success_msg, kwargs={'auftrags_id': order_id, 'success': 2}))
-    return render(request, 'workflow/auftrag_details.html', createAuftragDict(order_id))
+    return render(request, 'workflow/auftrag_details.html', create_order_dict(order_id))
 
 
 @login_required
-def auftrag_details_success_msg(request, auftrags_id, success):
+def auftrag_details_success_msg(request, auftrags_id: int, success: str):
     """
     Success IDS:
     1: Object successfully created
@@ -466,7 +454,7 @@ def auftrag_details_success_msg(request, auftrags_id, success):
     """
     if request.method == 'POST':
         return order_details(request, auftrags_id)
-    auftrag_dict = createAuftragDict(auftrags_id)
+    auftrag_dict = create_order_dict(auftrags_id)
     if success == 1:
         auftrag_dict['msg_head'] = "Der Auftrag konnte erfolgreich erstellt werden!"
     elif success == 2:
@@ -474,43 +462,43 @@ def auftrag_details_success_msg(request, auftrags_id, success):
     return render(request, 'workflow/auftrag_details.html', auftrag_dict)
 
 
-def createKundeDict(kunde_id):
-    kunde = get_object_or_404(Kunde, pk=kunde_id)
-    auftraege = Auftrag.objects.filter(kunden_id=kunde_id)
-    return {'kunde_id': kunde_id,
-            'kunde': kunde,
-            'auftraege_liste': auftraege,
-            'anzahl_auftraege': len(auftraege),
+def create_customer_dict(customer_id: int):
+    customer: Kunde = get_object_or_404(Kunde, pk=customer_id)
+    orders: list = Auftrag.objects.filter(kunden_id=customer_id)
+    return {'kunde_id': customer_id,
+            'kunde': customer,
+            'auftraege_liste': orders,
+            'anzahl_auftraege': len(orders),
             }
 
 
 @login_required
-def kunde_details(request, kunde_id):
-    return render(request, 'workflow/kunde_details.html', createKundeDict(kunde_id))
+def kunde_details(request, customer_id: int):
+    return render(request, 'workflow/kunde_details.html', create_customer_dict(customer_id))
 
 
-def kunde_details_success_msg(request, kunde_id, success):
-    kunde_dict = createKundeDict(kunde_id)
-    kunde_dict['erfolgreich_erstellt'] = True
-    return render(request, 'workflow/kunde_details.html', kunde_dict)
+def kunde_details_success_msg(request, customer_id: int, success):
+    customer_dict = create_customer_dict(customer_id)
+    customer_dict['erfolgreich_erstellt'] = True
+    return render(request, 'workflow/kunde_details.html', customer_dict)
 
 
 @login_required
-def bodenprobe_details(request, bodenprobe_id):
-    bodenprobe = get_object_or_404(Bodenprobe, pk=bodenprobe_id)
+def bodenprobe_details(request, soil_sample_id: int):
+    soil_sample: Bodenprobe = get_object_or_404(Bodenprobe, pk=soil_sample_id)
 
     if request.method == 'POST':
         form = UpdateSoilSample(request.POST)
         if form.is_valid():
             # TODO update/create alternate address
-            Bodenprobe.objects.filter(pk=bodenprobe_id).update(is_billing_address_sampling_point=form.cleaned_data['is_billing_address_sampling_point'])
-            Bodenprobe.objects.filter(pk=bodenprobe_id).update(status=form.cleaned_data['status_id'])
-            Bodenprobe.objects.filter(pk=bodenprobe_id).update(from_duisburg_south=form.cleaned_data['from_duisburg_south'])
-            save_full_geo_coordinate(bodenprobe_id, form.cleaned_data['geographic_coordinates_full_field'])
+            Bodenprobe.objects.filter(pk=soil_sample_id).update(is_billing_address_sampling_point=form.cleaned_data['is_billing_address_sampling_point'])
+            Bodenprobe.objects.filter(pk=soil_sample_id).update(status=form.cleaned_data['status_id'])
+            Bodenprobe.objects.filter(pk=soil_sample_id).update(from_duisburg_south=form.cleaned_data['from_duisburg_south'])
+            save_full_geo_coordinate(soil_sample_id, form.cleaned_data['geographic_coordinates_full_field'])
             if not form.cleaned_data['is_billing_address_sampling_point']:
-                if bodenprobe.alt_sampling_point_address_id != -1:
+                if soil_sample.alt_sampling_point_address_id != -1:
                     # Adresse aktualisieren
-                    Address.objects.filter(pk=bodenprobe.alt_sampling_point_address_id).update(
+                    Address.objects.filter(pk=soil_sample.alt_sampling_point_address_id).update(
                         zip_code=form.cleaned_data['alt_zip_code'],
                         city=form.cleaned_data['alt_city'],
                         street=form.cleaned_data['alt_street'],
@@ -528,52 +516,52 @@ def bodenprobe_details(request, bodenprobe_id):
                         country=form.cleaned_data['alt_country'],
                         address_suffix=form.cleaned_data['alt_address_suffix']
                     )
-                    Bodenprobe.objects.filter(pk=bodenprobe.id).update(
+                    Bodenprobe.objects.filter(pk=soil_sample.id).update(
                         alt_sampling_point_address_id=address.id
                     )
-        return HttpResponseRedirect(reverse(bodenprobe_details, kwargs={'bodenprobe_id': bodenprobe_id}))
+        return HttpResponseRedirect(reverse(bodenprobe_details, kwargs={'soil_sample_id': soil_sample_id}))
 
     try:
-        auftrag = Auftrag.objects.filter(pk=bodenprobe.auftrags_id)[0]
+        order = Auftrag.objects.filter(pk=soil_sample.auftrags_id)[0]
     except IndexError:
-        auftrag = None
+        order = None
 
-    if auftrag is not None:
+    if order is not None:
         try:
-            kunde = Kunde.objects.filter(pk=auftrag.kunden_id)[0]
+            customer = Kunde.objects.filter(pk=order.kunden_id)[0]
         except IndexError:
-            kunde = None
+            customer = None
     else:
-        kunde = None
+        customer = None
 
     msg = None
     if 'msg' in request.GET.keys():
         msg = request.GET.get('msg')
 
-    bodenprobe_list = [{
-        'id': bodenprobe.id,
-        'label_name': bodenprobe.label_name,
-        'extra_info': bodenprobe.extra_info,
-        'cd': get_ppm_value('cd', bodenprobe.id),
-        'pb': get_ppm_value('pb', bodenprobe.id),
-        'cu': get_ppm_value('cu', bodenprobe.id),
-        'zn': get_ppm_value('zn', bodenprobe.id),
-        'cr': get_ppm_value('cr', bodenprobe.id),
-        'ni': get_ppm_value('ni', bodenprobe.id),
-        'as': get_ppm_value('as', bodenprobe.id),
+    soil_sample_list = [{
+        'id': soil_sample.id,
+        'label_name': soil_sample.label_name,
+        'extra_info': soil_sample.extra_info,
+        'cd': get_ppm_value('cd', soil_sample.id),
+        'pb': get_ppm_value('pb', soil_sample.id),
+        'cu': get_ppm_value('cu', soil_sample.id),
+        'zn': get_ppm_value('zn', soil_sample.id),
+        'cr': get_ppm_value('cr', soil_sample.id),
+        'ni': get_ppm_value('ni', soil_sample.id),
+        'as': get_ppm_value('as', soil_sample.id),
     }, ]
 
-    answer_filename = 'Auswertung-{0}-{1}-{2}.{3}'.format(kunde.vorname, kunde.nachname, bodenprobe.id,
+    answer_filename = 'Auswertung-{0}-{1}-{2}.{3}'.format(customer.vorname, customer.nachname, soil_sample.id,
                                                           'pdf' if microsoft_word_installed else 'docx')
     initial_form_dict = {
-                          'status_id': bodenprobe.status,
-                          'is_billing_address_sampling_point': bodenprobe.is_billing_address_sampling_point,
-                          'geographic_coordinates_full_field': get_full_geo_coordinate(bodenprobe_id),
-                          'from_duisburg_south': bodenprobe.from_duisburg_south,
+                          'status_id': soil_sample.status,
+                          'is_billing_address_sampling_point': soil_sample.is_billing_address_sampling_point,
+                          'geographic_coordinates_full_field': get_full_geo_coordinate(soil_sample_id),
+                          'from_duisburg_south': soil_sample.from_duisburg_south,
                       }
 
-    if bodenprobe.alt_sampling_point_address_id >= 0:
-        alt_address = get_object_or_404(Address, pk=bodenprobe.alt_sampling_point_address_id)
+    if soil_sample.alt_sampling_point_address_id >= 0:
+        alt_address = get_object_or_404(Address, pk=soil_sample.alt_sampling_point_address_id)
         initial_form_dict['alt_zip_code'] = alt_address.zip_code
         initial_form_dict['alt_city'] = alt_address.city
         initial_form_dict['alt_street'] = alt_address.street
@@ -583,20 +571,19 @@ def bodenprobe_details(request, bodenprobe_id):
 
     return render(request, 'workflow/bodenprobe_details.html',
                   {
-                      'bodenproben': bodenprobe_list,
-                      'auftrag': auftrag,
-                      'kunde': kunde,
+                      'bodenproben': soil_sample_list,
+                      'auftrag': order,
+                      'kunde': customer,
                       'msg': msg,
                       'answer_filename': answer_filename,
-                      'status': bodenprobe.status,
+                      'status': soil_sample.status,
                       'form': UpdateSoilSample(initial=initial_form_dict),
                   }
                   )
 
 
-@login_required
-def generate_pdf_answer_customer_file(bodenprobe_id, filename):
-    create_answer_pdf(bodenprobe_id, filename)
+def generate_pdf_answer_customer_file(soil_sample_id: int, filename: str):
+    create_answer_pdf(soil_sample_id, filename)
 
 
 def get_soil_sample_id_from_filename(filename):
@@ -607,15 +594,13 @@ def get_soil_sample_id_from_filename(filename):
 @login_required
 def download_file(request, inner_folder, filename):
     path = os.path.join(project_settings.MEDIA_ROOT, inner_folder, filename)
-    print(inner_folder)
-    print(filename)
-    print(path)
     if inner_folder == 'ana_answer' and Bodenprobe.objects.filter(
             pk=get_soil_sample_id_from_filename(filename)).count() == 1:
-        # Pdf als Antwort für den Kunden generieren
-        generate_pdf_answer_customer_file(get_soil_sample_id_from_filename(filename), filename)
+        # Generate pdf document as response to customer
+        soil_sample_id: int = get_soil_sample_id_from_filename(filename)
+        generate_pdf_answer_customer_file(soil_sample_id, filename)
     if os.path.exists(path):
-        # Ein Pdf-Dokument als Antwort für den Kunden soll heruntergeladen werden
+        # a pdf document as response to the customer will be downloaded
         with open(path, 'rb') as file:
             return HttpResponse(file.read(), content_type='application/force-download')
     raise Http404
