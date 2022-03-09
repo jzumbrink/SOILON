@@ -106,3 +106,5 @@ class UpdateSoilSample(forms.Form):
 
     geographic_coordinates_full_field = forms.CharField(required=False,
                                                         widget=forms.TextInput(attrs={'placeholder': 'hier die Koordinaten einfügen'}))
+
+    from_duisburg_south = forms.BooleanField(required=False, initial=False)

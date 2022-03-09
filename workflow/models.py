@@ -92,6 +92,7 @@ class Bodenprobe(models.Model):
 
     geo_coordinate_id = models.IntegerField(blank=True, default=-1)
 
+    from_duisburg_south = models.BooleanField(blank=True, default=False)
 
     def __str__(self):
         if self.label_name is None or self.label_name == '':

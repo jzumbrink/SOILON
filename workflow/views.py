@@ -505,6 +505,7 @@ def bodenprobe_details(request, bodenprobe_id):
             # TODO update/create alternate address
             Bodenprobe.objects.filter(pk=bodenprobe_id).update(is_billing_address_sampling_point=form.cleaned_data['is_billing_address_sampling_point'])
             Bodenprobe.objects.filter(pk=bodenprobe_id).update(status=form.cleaned_data['status_id'])
+            Bodenprobe.objects.filter(pk=bodenprobe_id).update(from_duisburg_south=form.cleaned_data['from_duisburg_south'])
             save_full_geo_coordinate(bodenprobe_id, form.cleaned_data['geographic_coordinates_full_field'])
             if not form.cleaned_data['is_billing_address_sampling_point']:
                 if bodenprobe.alt_sampling_point_address_id != -1:
@@ -567,7 +568,8 @@ def bodenprobe_details(request, bodenprobe_id):
     initial_form_dict = {
                           'status_id': bodenprobe.status,
                           'is_billing_address_sampling_point': bodenprobe.is_billing_address_sampling_point,
-                          'geographic_coordinates_full_field': get_full_geo_coordinate(bodenprobe_id)
+                          'geographic_coordinates_full_field': get_full_geo_coordinate(bodenprobe_id),
+                          'from_duisburg_south': bodenprobe.from_duisburg_south,
                       }
 
     if bodenprobe.alt_sampling_point_address_id >= 0:
