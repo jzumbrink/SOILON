@@ -24,6 +24,10 @@ with open('prod_flag.json', 'r') as prod_flag_file:
     prod_flag_content = prod_flag_file.read()
     prod_flag = json.loads(prod_flag_content)
 
+with open('db_path.json', 'r') as db_path_file:
+    db_path_content = db_path_file.read()
+    database_path = json.loads(db_path_content)['database-name']
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -91,7 +95,7 @@ WSGI_APPLICATION = 'SoilonWorkflowSolutions.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': config['database-name'],
+        'NAME': database_path,
     }
 }
 
