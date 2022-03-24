@@ -14,9 +14,15 @@ from pathlib import Path
 import os
 import json
 
+
+# TODO remove production flag from normal config.json file
 with open('config.json', 'r') as config_file:
     config_content = config_file.read()
     config = json.loads(config_content)
+
+with open('prod_flag.json', 'r') as prod_flag_file:
+    prod_flag_content = prod_flag_file.read()
+    prod_flag = json.loads(prod_flag_content)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,7 +35,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config['secret-key']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = not config['production']
+DEBUG = not prod_flag['production']
 
 ALLOWED_HOSTS = ["127.0.0.1"]
 
