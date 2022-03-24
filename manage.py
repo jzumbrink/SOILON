@@ -3,8 +3,7 @@
 import os
 import sys
 
-
-def main():
+def main(sys_argv_script_location, sys_argv_arguments):
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'SoilonWorkflowSolutions.settings')
     try:
@@ -15,8 +14,11 @@ def main():
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
-    execute_from_command_line(sys.argv)
+    execute_from_command_line(sys_argv_script_location + sys_argv_arguments)
 
 
 if __name__ == '__main__':
-    main()
+    sys_argv = sys.argv
+    main(sys_argv_script_location=sys_argv[:1],
+         sys_argv_arguments=sys_argv[1:]
+         )
