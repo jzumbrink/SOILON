@@ -27,7 +27,7 @@ urlpatterns = [
     path('pdf_upload/success_message/', views.pdf_succeed, name="pdf_successful"),
     path('add-customer-successful', views.add_customer_successful, name="add_customer_successful"),
     path('auftrag/<int:auftrags_id>/<int:success>', views.auftrag_details_success_msg, name="auftrag_details_success_msg"),
-    path('customer/<int:kunde_id>/<int:success>', views.kunde_details_success_msg, name="kunde_details_success_msg"),
+    path('customer/<int:customer_id>/<int:success>', views.kunde_details_success_msg, name="kunde_details_success_msg"),
     #media/uploads following
 
 ]

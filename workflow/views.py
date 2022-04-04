@@ -56,7 +56,7 @@ def new_customer(request):
                 geschlecht=gender,
                 titel=form.cleaned_data['titel'],
             )
-            return HttpResponseRedirect(reverse(kunde_details_success_msg, kwargs={'kunde_id': k.id, 'success': 1}))
+            return HttpResponseRedirect(reverse(kunde_details_success_msg, kwargs={'customer_id': k.id, 'success': 1}))
     form = NewCustomer()
     return render(request, 'workflow/neuen_kunde_anlegen.html', {
         'form': form,
@@ -473,8 +473,8 @@ def create_customer_dict(customer_id: int):
 
 
 @login_required
-def kunde_details(request, customer_id: int):
-    return render(request, 'workflow/kunde_details.html', create_customer_dict(customer_id))
+def kunde_details(request, kunde_id: int):
+    return render(request, 'workflow/kunde_details.html', create_customer_dict(kunde_id))
 
 
 def kunde_details_success_msg(request, customer_id: int, success):
