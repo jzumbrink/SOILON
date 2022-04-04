@@ -190,7 +190,7 @@ def upload_soil_sample_result(request):
                                                           results_upload_time=timezone.now(),
                                                           )
                 # Zu der Bodenprobe leiten
-                return HttpResponseRedirect(reverse(bodenprobe_details, kwargs={
+                return HttpResponseRedirect(reverse(soil_sample_details, kwargs={
                     'soil_sample_id': b.id}) + "?msg=Die Daten wurden erfolgreich hochgeladen!")
             else:
                 return HttpResponseRedirect(reverse(raise_error) + "?error_details=Das Formular ist nicht gültig")
@@ -484,7 +484,7 @@ def kunde_details_success_msg(request, customer_id: int, success):
 
 
 @login_required
-def bodenprobe_details(request, soil_sample_id: int):
+def soil_sample_details(request, soil_sample_id: int):
     soil_sample: Bodenprobe = get_object_or_404(Bodenprobe, pk=soil_sample_id)
 
     if request.method == 'POST':
@@ -519,7 +519,7 @@ def bodenprobe_details(request, soil_sample_id: int):
                     Bodenprobe.objects.filter(pk=soil_sample.id).update(
                         alt_sampling_point_address_id=address.id
                     )
-        return HttpResponseRedirect(reverse(bodenprobe_details, kwargs={'soil_sample_id': soil_sample_id}))
+        return HttpResponseRedirect(reverse(soil_sample_details, kwargs={'soil_sample_id': soil_sample_id}))
 
     try:
         order = Auftrag.objects.filter(pk=soil_sample.auftrags_id)[0]
@@ -546,7 +546,6 @@ def bodenprobe_details(request, soil_sample_id: int):
         'pb': get_ppm_value('pb', soil_sample.id),
         'cu': get_ppm_value('cu', soil_sample.id),
         'zn': get_ppm_value('zn', soil_sample.id),
-        'cr': get_ppm_value('cr', soil_sample.id),
         'ni': get_ppm_value('ni', soil_sample.id),
         'as': get_ppm_value('as', soil_sample.id),
     }, ]

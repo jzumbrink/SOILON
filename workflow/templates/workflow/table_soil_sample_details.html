@@ -23,9 +23,6 @@
         <colgroup id="ppm-value-col">
             <col>
         </colgroup>
-        <colgroup id="ppm-value-col">
-            <col>
-        </colgroup>
         <colgroup id="soil-sample-etc">
             <col>
         </colgroup>
@@ -37,7 +34,6 @@
             <td><b>Blei</b></td>
             <td><b>Kupfer</b></td>
             <td><b>Zink</b></td>
-            <td><b>Chrom</b></td>
             <td><b>Nickel</b></td>
             <td><b>Arsen</b></td>
             <td><b>Sonstiges</b></td>
@@ -51,7 +47,6 @@
                 <td>{{ soil_sample.pb }} ppm</td>
                 <td>{{ soil_sample.cu }} ppm</td>
                 <td>{{ soil_sample.zn }} ppm</td>
-                <td>{{ soil_sample.cr }} ppm</td>
                 <td>{{ soil_sample.ni }} ppm</td>
                 <td>{{ soil_sample.as }} ppm</td>
                 <td>{% if soil_sample.extra_info %}{{ soil_sample.extra_info }}{% else %}-{% endif %}</td>
