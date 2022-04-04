@@ -3,11 +3,11 @@ import json
 with open('config.json', 'r') as config_file:
     config = json.loads(config_file.read())
 
-bodenprobe_preis = 15
+bodenprobe_preis: int = 15
 
-std_auftrag_name = "Standard-Auftrag"
+std_auftrag_name: str = "Standard-Auftrag"
 
-customers_per_site = 10
+customers_per_site: int = 10
 
 # Suchkriterien für die verschiedenen Klassen in der Datenbank
 suchkriterien = {
@@ -30,7 +30,7 @@ baselink = {
     "bod": "bodenprobe_details",
 }
 
-microsoft_word_installed = config['microsoft-word-installed']
+microsoft_word_installed: bool = config['microsoft-word-installed']
 
 production: bool = config['production']
 
@@ -39,9 +39,10 @@ relevant_elements = [
     'Cu',
     'Pb',
     'Zn',
-    'Cr',
     'Ni',
     'As',
 ]
 
 used_elements = [element.lower() for element in relevant_elements]
+
+template_filename: str = 'tpl_6.docx'
