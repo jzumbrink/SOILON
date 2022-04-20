@@ -3,7 +3,9 @@ import json
 with open('config.json', 'r') as config_file:
     config = json.loads(config_file.read())
 
-bodenprobe_preis: int = 15
+soil_sample_price: float = 15.0
+
+bodenprobe_preis = 1
 
 std_auftrag_name: str = "Standard-Auftrag"
 
@@ -46,3 +48,9 @@ relevant_elements = [
 used_elements = [element.lower() for element in relevant_elements]
 
 template_filename: str = 'tpl_6.docx'
+
+invoice_tpl_filename: str = 'invoice_1.docx'
+
+invoice_descs: dict = {
+    'soil_sample': "Schwermetallanalyse As, Cd, Cu, Ni, Pb und Zn mittels RFA",
+}

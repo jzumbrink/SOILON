@@ -1,10 +1,10 @@
 from django.db import models
-from .config import bodenprobe_preis
+from .config import soil_sample_price
 
 
 class Kunde(models.Model):
-    # kunden_id wird als Integer Wert automatisch von Django erstellt
-    # dabei ist der primary_key dann read only
+    # id will be created as Integer value and Primary Key from Django automatically
+    # the Primary Key id is read only
 
     nachname = models.CharField(max_length=50)  # required
     vorname = models.CharField(max_length=50)  # required
@@ -35,7 +35,7 @@ class Auftrag(models.Model):
     kunden_id = models.IntegerField()
     anzahl_bodenproben = models.IntegerField(default=1)
     notizen = models.TextField(blank=True)
-    preis = models.FloatField(default=bodenprobe_preis)
+    preis = models.FloatField(default=soil_sample_price)
     nachlass = models.FloatField(default=0)
     bereits_gezahlt = models.BooleanField(default=False)
     ergebnisse_zurueckgemeldet = models.IntegerField(default=0)

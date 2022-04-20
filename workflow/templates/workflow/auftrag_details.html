@@ -49,4 +49,9 @@ Auftrag - Übersicht
     <h2>Bodenproben</h2>
     {% include 'workflow/table_soil_sample_details.html' with soil_sample_list=bodenproben%}
     </div>
+    <div class="col-12">
+        <div class="files">
+            <a href="{% url 'download_file' inner_folder="invoices" filename=invoice_filename %}">Rechnung als ".docx" generieren</a>
+        </div>
+    </div>
 {% endblock %}

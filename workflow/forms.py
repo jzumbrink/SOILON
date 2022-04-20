@@ -1,21 +1,17 @@
 from django import forms
-from .config import bodenprobe_preis, std_auftrag_name
+from .config import soil_sample_price, std_auftrag_name
 from .models import Bodenprobe
 
 
 class ChooseOrder(forms.Form):
     auftrags_id = forms.IntegerField(
         widget=forms.NumberInput,
-        # min_value=Auftrag.objects.order_by('id')[0].id,
-        # max_value=Auftrag.objects.order_by('-id')[0].id,
     )
 
 
 class UploadPdfBodenprobeFile(forms.Form):
     pdf_bodenprobe_file = forms.FileField()
     bodenprobe_id = None
-   #     queryset=Bodenprobe.objects.filter(auftrags_id=30)
-    #)
 
     def __init__(self, auftrag_id, *args, **kwargs):
         super(UploadPdfBodenprobeFile, self).__init__(*args, **kwargs)
@@ -31,7 +27,7 @@ class UploadPdfBodenprobeFile(forms.Form):
 class NewOrder(forms.Form):
     kunden_id = forms.IntegerField(widget=forms.NumberInput, min_value=0)
     anzahl_bodenproben = forms.IntegerField(widget=forms.NumberInput, initial=1, min_value=1)
-    preis = forms.FloatField(initial=bodenprobe_preis,
+    preis = forms.FloatField(initial=soil_sample_price,
                              widget=forms.NumberInput(
                                  attrs={
                                      'step': 0.01,

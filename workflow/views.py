@@ -10,7 +10,7 @@ from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.urls import reverse
 from .backend_calculations import *
 from .config import *
-from .answer_pdf import create_answer_pdf
+from .answer_pdf import create_answer_pdf, create_invoice_pdf
 from .json_generator import generate_data_soil_samples_json_file
 from .database_operations import get_ppm_value
 from math import ceil
@@ -407,28 +407,32 @@ def raise_error(request):
         })
 
 
-def create_order_dict(auftrags_id: int):
-    auftrag = get_object_or_404(Auftrag, pk=auftrags_id)
-    kunde = get_object_or_404(Kunde, pk=auftrag.kunden_id)
+def create_order_dict(order_id: int):
+    order = get_object_or_404(Auftrag, pk=order_id)
+    customer = get_object_or_404(Kunde, pk=order.kunden_id)
     # Hinzu kommt eine Tabelle mit allen Bodenproben
-    bodenprobe_list = [{
-        'id': bodenprobe.id,
-        'label_name': bodenprobe.label_name,
-        'extra_info': bodenprobe.extra_info,
-        'cd': get_ppm_value('cd', bodenprobe.id),
-        'pb': get_ppm_value('pb', bodenprobe.id),
-        'cu': get_ppm_value('cu', bodenprobe.id),
-        'zn': get_ppm_value('zn', bodenprobe.id),
-        'cr': get_ppm_value('cr', bodenprobe.id),
-        'ni': get_ppm_value('ni', bodenprobe.id),
-        'as': get_ppm_value('as', bodenprobe.id),
-    } for bodenprobe in Bodenprobe.objects.filter(auftrags_id=auftrags_id)]
+    soil_samples_list = [{
+        'id': soil_sample.id,
+        'label_name': soil_sample.label_name,
+        'extra_info': soil_sample.extra_info,
+        'cd': get_ppm_value('cd', soil_sample.id),
+        'pb': get_ppm_value('pb', soil_sample.id),
+        'cu': get_ppm_value('cu', soil_sample.id),
+        'zn': get_ppm_value('zn', soil_sample.id),
+        'cr': get_ppm_value('cr', soil_sample.id),
+        'ni': get_ppm_value('ni', soil_sample.id),
+        'as': get_ppm_value('as', soil_sample.id),
+    } for soil_sample in Bodenprobe.objects.filter(auftrags_id=order_id)]
+
     form = UpdateAuftrag()
-    return {'auftrags_id': auftrags_id,
-            'auftrag': auftrag,
-            'kunde': kunde,
-            'bodenproben': bodenprobe_list,
+    invoice_filename = 'Rechnung-{0}-{1}-{2}.{3}'.format(customer.vorname, customer.nachname, order_id,
+                                                          'pdf' if microsoft_word_installed else 'docx')
+    return {'auftrags_id': order_id,
+            'auftrag': order,
+            'kunde': customer,
+            'bodenproben': soil_samples_list,
             'form': form,
+            'invoice_filename': invoice_filename,
             }
 
 
@@ -585,19 +589,25 @@ def generate_pdf_answer_customer_file(soil_sample_id: int, filename: str):
     create_answer_pdf(soil_sample_id, filename)
 
 
-def get_soil_sample_id_from_filename(filename):
+def get_id_from_filename(filename):
     name = filename.split('.')[0]
     return int(name.split('-')[-1])
 
 
 @login_required
 def download_file(request, inner_folder, filename):
+    # TODO rewrite download function
     path = os.path.join(project_settings.MEDIA_ROOT, inner_folder, filename)
     if inner_folder == 'ana_answer' and Bodenprobe.objects.filter(
-            pk=get_soil_sample_id_from_filename(filename)).count() == 1:
+            pk=get_id_from_filename(filename)).count() == 1:
         # Generate pdf document as response to customer
-        soil_sample_id: int = get_soil_sample_id_from_filename(filename)
+        soil_sample_id: int = get_id_from_filename(filename)
         generate_pdf_answer_customer_file(soil_sample_id, filename)
+    if inner_folder == 'invoices' and Kunde.objects.filter(
+            pk=get_id_from_filename(filename)).count() == 1:
+        # Generate pdf document as response to customer
+        order_id: int = get_id_from_filename(filename)
+        create_invoice_pdf(order_id, filename)
     if os.path.exists(path):
         # a pdf document as response to the customer will be downloaded
         with open(path, 'rb') as file:

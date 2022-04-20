@@ -6,7 +6,7 @@ from .models import Kunde, Auftrag, Bodenprobe, PpmValue
 from .database_operations import get_ppm_value
 from .color_bars import createImg, create_dummy_img
 from SoilonWorkflowSolutions import settings as project_settings
-from .config import microsoft_word_installed, used_elements, template_filename
+from .config import microsoft_word_installed, used_elements, template_filename, invoice_tpl_filename, soil_sample_price
 from docx2pdf import convert
 
 month_map: dict = {
@@ -25,6 +25,29 @@ month_map: dict = {
 }
 
 
+def basic_customer_context(customer: Kunde) -> dict:
+    return {
+        'title': customer.titel + ' ' if len(customer.titel) > 0 else '',
+        'first_name': customer.vorname,
+        'surname': customer.nachname,
+        'street': customer.strasse,
+        'house_number': str(customer.hausnummer),
+        'zip_code': str(customer.plz),
+        'city': customer.wohnort,
+        'address': "Sehr geehrte Frau" if customer.anrede == "Frau" or customer.geschlecht == 'w' else (
+            "Sehr geehrter Herr" if customer.anrede == "Herr" or customer.geschlecht == 'm' else "Sehr geehrte/r Frau/Herr"),
+    }
+
+
+def basic_date_context() -> dict:
+    today = date.today()
+    return {
+        'day': str(today.day),
+        'month_de': month_map[today.month],
+        'year': str(today.year),
+    }
+
+
 def create_answer_pdf(soil_sample_id: int, filename: str):
     filename = '.'.join(filename.split('.')[:-1])
     filename_docx = filename + '.docx'
@@ -40,8 +63,6 @@ def create_answer_pdf(soil_sample_id: int, filename: str):
     order = Auftrag.objects.get(pk=soil_sample.auftrags_id)
     customer = Kunde.objects.get(pk=order.kunden_id)
 
-    today = date.today()
-
     img_filenames = {}
     for element in used_elements:
         img_filenames[element] = os.path.join(img_temp_folder, 'img_{0}_{1}.png'.format(soil_sample_id, element))
@@ -50,19 +71,8 @@ def create_answer_pdf(soil_sample_id: int, filename: str):
         else:
             create_dummy_img(img_filenames[element])
 
-    context = {
-        'title': customer.titel + ' ' if len(customer.titel) > 0 else '',
-        'first_name': customer.vorname,
-        'surname': customer.nachname,
-        'street': customer.strasse,
-        'house_number': str(customer.hausnummer),
-        'zip_code': str(customer.plz),
-        'city': customer.wohnort,
-        'day': str(today.day),
-        'month_de': month_map[today.month],
-        'year': str(today.year),
+    context: dict = {
         'heading': "Ihre Analyse",
-        'address': "Sehr geehrte Frau" if customer.anrede == "Frau" or customer.geschlecht == 'w' else ("Sehr geehrter Herr" if customer.anrede == "Herr" or customer.geschlecht == 'm' else "Sehr geehrte/r Frau/Herr"),
         'cd_img': InlineImage(tpl=tpl, image_descriptor=img_filenames['cd'], width=Mm(162)),
         'cd_val': str(get_ppm_value('cd', soil_sample_id)) + " ppm",
         'cu_img': InlineImage(tpl=tpl, image_descriptor=img_filenames['cu'], width=Mm(162)),
@@ -76,6 +86,8 @@ def create_answer_pdf(soil_sample_id: int, filename: str):
         'as_img': InlineImage(tpl=tpl, image_descriptor=img_filenames['as'], width=Mm(162)),
         'as_val': str(get_ppm_value('as', soil_sample_id)) + " ppm",
     }
+    context.update(basic_customer_context(customer))
+    context.update(basic_date_context())
 
     tpl.render(context=context)
 
@@ -89,3 +101,41 @@ def create_answer_pdf(soil_sample_id: int, filename: str):
     for img_filename in img_filenames:
         if os.path.isfile(img_filename):
             os.remove(img_filename)
+
+
+def invoice_contents_and_sum(order: Auftrag):
+    invoice_contents = [{
+        'position': 1,
+        'count': order.anzahl_bodenproben,
+        'description': "Schwermetallanalyse As, Cd, Cu, Ni, Pb und Zn mittels RFA",
+        'single_price': "{0:,.2f}".format(soil_sample_price).replace('.', ','),
+        'combined_price': "{0:,.2f}".format(soil_sample_price * order.anzahl_bodenproben).replace('.', ','),
+    }]
+    # TODO implement entries from other services
+    combined_sum = "{0:,.2f}".format(soil_sample_price * order.anzahl_bodenproben).replace('.', ',')
+    return combined_sum, invoice_contents
+
+
+def create_invoice_pdf(order_id: int, filename: str):
+    filename = '.'.join(filename.split('.')[:-1])
+    filename_docx = filename + '.docx'
+
+    target_folder = os.path.join(project_settings.MEDIA_ROOT, 'invoices')
+    target_file_docx = os.path.join(target_folder, filename_docx)
+
+    tpl_filename = os.path.join(project_settings.STATIC_ROOT, 'tpl_office', invoice_tpl_filename)
+    tpl = DocxTemplate(tpl_filename)
+
+    order = Auftrag.objects.get(pk=order_id)
+    customer = Kunde.objects.get(pk=order.kunden_id)
+
+    combined_sum, invoice_contents = invoice_contents_and_sum(order)
+    context = {
+        'invoice_contents': invoice_contents,
+        'combined_sum': combined_sum,
+    }
+    context.update(basic_customer_context(customer))
+    context.update(basic_date_context())
+
+    tpl.render(context=context)
+    tpl.save(target_file_docx)
