@@ -5,27 +5,25 @@ with open('config.json', 'r') as config_file:
 
 soil_sample_price: float = 15.0
 
-bodenprobe_preis = 1
-
 std_auftrag_name: str = "Standard-Auftrag"
 
 customers_per_site: int = 10
 
-# Suchkriterien für die verschiedenen Klassen in der Datenbank
-suchkriterien = {
+# search criteria for the different models in the database
+search_criteria = {
     "kun": ['nachname', 'vorname', 'id', 'email', 'wohnort', 'vorname+nachname', 'nachname+vorname'],
     "auf": ['id', 'label_name'],
     "bod": ['id', 'label_name'],
 }
 
-# Und die Daten, die dargestellt werden sollen
-suchergebniss_spalten = {
+# specify which data to display
+search_result_columns = {
     "kun": ['nachname', 'vorname', 'email', 'wohnort'],
     "auf": ['label_name'],
     "bod": ['label_name'],
 }
 
-# Damit auf die Details Seiten der Klassen auch verlinkt werden kann
+# to be able to link to the details sites of the other models
 baselink = {
     "kun": "kunde_details",
     "auf": "auftrag_details",

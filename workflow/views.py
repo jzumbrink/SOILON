@@ -322,16 +322,16 @@ def search_database(request):
         search_string = request.GET.get("search")
         objekt_score_liste = []
         for objekt in alle_objekte:
-            score = get_comparision_score(search_string, objekt, suchkriterien[db_class])
+            score = get_comparision_score(search_string, objekt, search_criteria[db_class])
             objekt_score_liste.append({'score': score, 'obj': objekt})
 
-        obj_daten = [{'data': [obj['obj'].__dict__[kriterium] for kriterium in suchergebniss_spalten[db_class]],
+        obj_daten = [{'data': [obj['obj'].__dict__[kriterium] for kriterium in search_result_columns[db_class]],
                       'score': obj['score'], 'id': obj['obj'].id} for obj in
                      (sorted(objekt_score_liste, key=lambda l: l['score'], reverse=True)) if obj['score'] > 0.55]
 
         provided_data['baselink'] = baselink[db_class]
         provided_data['suchword'] = search_string
-        provided_data['suchergebniss_spalten'] = suchergebniss_spalten[db_class]
+        provided_data['suchergebniss_spalten'] = search_result_columns[db_class]
         provided_data['anzahl_ergebnisse'] = len(obj_daten) if len(obj_daten) > 0 else -1
 
         # Die Zahl der Ergebnisse pro Seite bestimmen
