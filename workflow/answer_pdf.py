@@ -133,6 +133,10 @@ def create_invoice_pdf(order_id: int, filename: str):
     context = {
         'invoice_contents': invoice_contents,
         'combined_sum': combined_sum,
+        'order_id': str(order_id),
+        'customer_id': str(customer.id),
+        'first_name': customer.vorname,
+        'payment_details': "Zahlungsbedingungen: Zahlung innerhalb von 7 Tagen ab Rechnungseingang ohne Abzüge." if not order.bereits_gezahlt else "Der Betrag wurde bereits überwiesen.",
     }
     context.update(basic_customer_context(customer))
     context.update(basic_date_context())
