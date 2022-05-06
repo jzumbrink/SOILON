@@ -71,7 +71,7 @@ def get_customer_list(request):
         # page_customers decides which customer to display
         page_customers = int(request.GET.get('page_customers')) - 1
         customer_list = customer_list[page_customers * customers_per_site:min(count_customer,
-                                                                            page_customers * customers_per_site + customers_per_site)]
+                                                                              page_customers * customers_per_site + customers_per_site)]
     else:
         customer_list = customer_list[0:customers_per_site]
         page_customers = 0
@@ -91,7 +91,7 @@ def get_customer_list(request):
 
 
 @login_required
-def http_error(request, error_title: str=None, error_details: str="Es ist ein Fehler aufgetreten"):
+def http_error(request, error_title: str = None, error_details: str = "Es ist ein Fehler aufgetreten"):
     if error_title is not None:
         # Fehlermeldung mit Titel und Content
         return HttpResponseRedirect(
@@ -179,10 +179,10 @@ def upload_soil_sample_result(request):
                 kunden_id = Kunde.objects.get(pk=a.kunden_id).id
 
                 generated_txt = handle_soil_sample_evaluation(form.cleaned_data['pdf_bodenprobe_file'],
-                                                             kunden_id,
-                                                             b.auftrags_id,
-                                                             b.id,
-                                                             )
+                                                              kunden_id,
+                                                              b.auftrags_id,
+                                                              b.id,
+                                                              )
                 Bodenprobe.objects.filter(pk=b.pk).update(mail_text=generated_txt[0],
                                                           raw_data_path=generated_txt[1],
                                                           raw_filename=generated_txt[2],
@@ -423,7 +423,7 @@ def create_order_dict(order_id: int):
 
     form = UpdateAuftrag()
     invoice_filename = 'Rechnung-{0}-{1}-{2}.{3}'.format(customer.vorname, customer.nachname, order_id,
-                                                          'pdf' if microsoft_word_installed else 'docx')
+                                                         'pdf' if microsoft_word_installed else 'docx')
     return {'auftrags_id': order_id,
             'auftrag': order,
             'kunde': customer,
@@ -492,9 +492,11 @@ def soil_sample_details(request, soil_sample_id: int):
         form = UpdateSoilSample(request.POST)
         if form.is_valid():
             # TODO update/create alternate address
-            Bodenprobe.objects.filter(pk=soil_sample_id).update(is_billing_address_sampling_point=form.cleaned_data['is_billing_address_sampling_point'])
+            Bodenprobe.objects.filter(pk=soil_sample_id).update(
+                is_billing_address_sampling_point=form.cleaned_data['is_billing_address_sampling_point'])
             Bodenprobe.objects.filter(pk=soil_sample_id).update(status=form.cleaned_data['status_id'])
-            Bodenprobe.objects.filter(pk=soil_sample_id).update(from_duisburg_south=form.cleaned_data['from_duisburg_south'])
+            Bodenprobe.objects.filter(pk=soil_sample_id).update(
+                from_duisburg_south=form.cleaned_data['from_duisburg_south'])
             save_full_geo_coordinate(soil_sample_id, form.cleaned_data['geographic_coordinates_full_field'])
             if not form.cleaned_data['is_billing_address_sampling_point']:
                 if soil_sample.alt_sampling_point_address_id != -1:
@@ -554,11 +556,11 @@ def soil_sample_details(request, soil_sample_id: int):
     answer_filename = 'Auswertung-{0}-{1}-{2}.{3}'.format(customer.vorname, customer.nachname, soil_sample.id,
                                                           'pdf' if microsoft_word_installed else 'docx')
     initial_form_dict = {
-                          'status_id': soil_sample.status,
-                          'is_billing_address_sampling_point': soil_sample.is_billing_address_sampling_point,
-                          'geographic_coordinates_full_field': get_full_geo_coordinate(soil_sample_id),
-                          'from_duisburg_south': soil_sample.from_duisburg_south,
-                      }
+        'status_id': soil_sample.status,
+        'is_billing_address_sampling_point': soil_sample.is_billing_address_sampling_point,
+        'geographic_coordinates_full_field': get_full_geo_coordinate(soil_sample_id),
+        'from_duisburg_south': soil_sample.from_duisburg_south,
+    }
 
     if soil_sample.alt_sampling_point_address_id >= 0:
         alt_address = get_object_or_404(Address, pk=soil_sample.alt_sampling_point_address_id)
@@ -583,29 +585,40 @@ def soil_sample_details(request, soil_sample_id: int):
 
 
 def get_id_from_filename(filename):
-    name = filename.split('.')[0]
-    return int(name.split('-')[-1])
+    # required filename format: TEXT-ID.FORMAT
+    splitted_filename: list = filename.split('.')
+    if len(splitted_filename) < 2:
+        return -1
+    splitted_filename = splitted_filename[-2].split('-')
+    if len(splitted_filename) < 1:
+        return -1
+    return int(splitted_filename[-1])
 
 
 @login_required
 def download_file(request, inner_folder, filename):
     # TODO rewrite download function
     path = os.path.join(project_settings.MEDIA_ROOT, inner_folder, filename)
-    if inner_folder == 'ana_answer' and Bodenprobe.objects.filter(
-            pk=get_id_from_filename(filename)).count() == 1:
-        # Generate pdf document as response to customer
+    if inner_folder == 'ana_answer':
         soil_sample_id: int = get_id_from_filename(filename)
-        create_answer_pdf(soil_sample_id, filename)
+        if Bodenprobe.objects.filter(pk=soil_sample_id).count() == 1:
+            # generate pdf document of the analysis of the soil sample for the customer
+            create_answer_pdf(soil_sample_id, filename)
+        else:
+            return http_error(request=request,
+                              error_title="Die Auswertung der Bodenprobe konnte nicht erstellt werden",
+                              error_details="Die von angegebene Bodenprobe mit der Id {} scheint nicht zu existieren. "
+                                            "Deswegen konnte die Auswertung nicht erstellt werden".format(soil_sample_id))
     if inner_folder == 'invoices':
-        if Auftrag.objects.filter(pk=get_id_from_filename(filename)).count() == 1:
-            # Generate pdf document as response to customer
-            order_id: int = get_id_from_filename(filename)
+        order_id: int = get_id_from_filename(filename)
+        if Auftrag.objects.filter(pk=order_id).count() == 1:
+            # generate invoice document for the specific order
             create_invoice_pdf(order_id, filename)
         else:
             return http_error(request=request,
                               error_title="Die Rechnung konnte nicht erstellt werden",
-                              error_details="Für den Auftrag konnte leider keinen Rechnung erstellt werden, da kein "
-                                            "Kunde/Kundin zu dem Auftrag zugeordnet werden konnte")
+                              error_details="Für den Auftrag konnte leider keine Rechnung erstellt werden, da kein "
+                                            "Auftrag mit der Id {} existiert.".format(order_id))
 
     if os.path.exists(path):
         # a pdf document as response to the customer will be downloaded
