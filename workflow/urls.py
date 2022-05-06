@@ -19,13 +19,13 @@ urlpatterns = [
     path('customer/<int:kunde_id>', views.kunde_details, name="kunde_details"),
     path('soil-sample/<int:soil_sample_id>', views.soil_sample_details, name="bodenprobe_details"),
 
-    path('error', views.raise_error, name="fehler"),
+    path('error/', views.raise_error, name="fehler"),
 
     path('media/downloads/json/soilSamplesData.json', views.download_soil_sample_json, name="download_soil_sample_json"),
     path('media/downloads/<str:inner_folder>/<str:filename>', views.download_file, name="download_file"),
 
     path('pdf_upload/success_message/', views.pdf_succeed, name="pdf_successful"),
-    path('add-customer-successful', views.add_customer_successful, name="add_customer_successful"),
+    path('add-customer-successful/', views.add_customer_successful, name="add_customer_successful"),
     path('auftrag/<int:auftrags_id>/<int:success>', views.auftrag_details_success_msg, name="auftrag_details_success_msg"),
     path('customer/<int:customer_id>/<int:success>', views.kunde_details_success_msg, name="kunde_details_success_msg"),
 ]

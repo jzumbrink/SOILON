@@ -382,29 +382,26 @@ def add_customer_successful(request):
             reverse(raise_error) + "?error_details={}".format("Die Kunden ID wurde nicht mittels \"GET\" übermittelt"))
 
 
+def unknown_error(request):
+    return render(request, 'workflow/error.html', {
+        'error_content': "Die Details des Fehlers sind bei der Weiterleitung zur Fehler-Anzeige verloren gegangen"
+    })
+
+
 @login_required
 def raise_error(request):
     if request.method == "GET":
         try:
             error_content = request.GET.get('error_details')
-            try:
-                error_title = request.GET.get('error_title')
-                return render(request, 'workflow/error.html', {
-                    'error_title': error_title,
-                    'error_content': error_content
-                })
-            except IndexError:
-                return render(request, 'workflow/error.html', {
-                    'error_content': error_content
-                })
-        except IndexError:
+            error_title = request.GET.get('error_title')
             return render(request, 'workflow/error.html', {
-                'error_content': "Die Details des Fehlers sind bei der Weiterleitung zur Fehler-Anzeige verloren gegangen"
+                'error_title': error_title,
+                'error_content': error_content
             })
-    else:
-        return render(request, 'workflow/error.html', {
-            'error_content': "Die Details des Fehlers sind bei der Weiterleitung zur Fehler-Anzeige verloren gegangen"
-        })
+        except IndexError:
+            return unknown_error(request)
+
+    return unknown_error(request)
 
 
 def create_order_dict(order_id: int):
@@ -585,10 +582,6 @@ def soil_sample_details(request, soil_sample_id: int):
                   )
 
 
-def generate_pdf_answer_customer_file(soil_sample_id: int, filename: str):
-    create_answer_pdf(soil_sample_id, filename)
-
-
 def get_id_from_filename(filename):
     name = filename.split('.')[0]
     return int(name.split('-')[-1])
@@ -602,17 +595,26 @@ def download_file(request, inner_folder, filename):
             pk=get_id_from_filename(filename)).count() == 1:
         # Generate pdf document as response to customer
         soil_sample_id: int = get_id_from_filename(filename)
-        generate_pdf_answer_customer_file(soil_sample_id, filename)
-    if inner_folder == 'invoices' and Kunde.objects.filter(
-            pk=get_id_from_filename(filename)).count() == 1:
-        # Generate pdf document as response to customer
-        order_id: int = get_id_from_filename(filename)
-        create_invoice_pdf(order_id, filename)
+        create_answer_pdf(soil_sample_id, filename)
+    if inner_folder == 'invoices':
+        if Auftrag.objects.filter(pk=get_id_from_filename(filename)).count() == 1:
+            # Generate pdf document as response to customer
+            order_id: int = get_id_from_filename(filename)
+            create_invoice_pdf(order_id, filename)
+        else:
+            return http_error(request=request,
+                              error_title="Die Rechnung konnte nicht erstellt werden",
+                              error_details="Für den Auftrag konnte leider keinen Rechnung erstellt werden, da kein "
+                                            "Kunde/Kundin zu dem Auftrag zugeordnet werden konnte")
+
     if os.path.exists(path):
         # a pdf document as response to the customer will be downloaded
         with open(path, 'rb') as file:
             return HttpResponse(file.read(), content_type='application/force-download')
-    raise Http404
+
+    return http_error(request=request,
+                      error_title="Datei wurde nicht gefunden",
+                      error_details="Die Datei {} konnte leider nicht bereitgestellt werden.".format(filename))
 
 
 @login_required
